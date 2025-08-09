@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pelas Mãos da Bahia - Cadastro e Dados</title>
+<style>
+:root {
+--azul: #1D3557;
+--vermelho: #E63946;
+--branco: #FFFFFF;
+--bege: #F8F4EC;
+}
+body {
+font-family: 'Segoe UI', Arial, sans-serif;
+margin: 0;
+background: var(--bege);
+color: #333;
+line-height: 1.6;
+}
+header {
+background: var(--azul);
+color: white;
+padding: 1.5rem;
+text-align: center;
+}
+nav {
+background: var(--vermelho);
+padding: 1rem;
+display: flex;
+justify-content: center;
+gap: 1.5rem;
+flex-wrap: wrap;
+}
+nav a {
+color: white;
+text-decoration: none;
+font-weight: bold;
+padding: 0.5rem;
+}
+.container {
+max-width: 1200px;
+margin: 2rem auto;
+padding: 0 1rem;
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 2rem;
+}
+.card {
+background: var(--branco);
+border-radius: 8px;
+padding: 2rem;
+box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+.formulario {
+grid-column: 1;
+}
+.dados {
+grid-column: 2;
+}
+h2 {
+color: var(--azul);
+margin-top: 0;
+}
+form {
+display: grid;
+gap: 1.2rem;
+}
+input, select, textarea {
+width: 100%;
+padding: 0.8rem;
+border: 1px solid #ddd;
+border-radius: 4px;
+font-family: inherit;
+}
+button {
+background: var(--vermelho);
+color: white;
+border: none;
+padding: 1rem;
+font-size: 1.1rem;
+cursor: pointer;
+border-radius: 4px;
+margin-top: 1rem;
+transition: background 0.3s;
+}
+button:hover {
+background: #C1121F;
+}
+.dica {
+font-size: 0.9rem;
+color: #666;
+margin-top: -0.5rem;
+}
+.dado {
+margin-bottom: 1.5rem;
+padding-bottom: 1.5rem;
+border-bottom: 1px solid #eee;
+}
+.fonte {
+font-size: 0.8rem;
+color: #666;
+font-style: italic;
+}
+table {
+width: 100%;
+border-collapse: collapse;
+margin: 1rem 0;
+}
+th, td {
+border: 1px solid #ddd;
+padding: 0.5rem;
+text-align: left;
+}
+th {
+background: var(--azul);
+color: white;
+}
+footer {
+background: var(--azul);
+color: white;
+text-align: center;
+padding: 1.5rem;
+margin-top: 2rem;
+}
+@media (max-width: 768px) {
+.container {
+grid-template-columns: 1fr;
+}
+.formulario, .dados {
+grid-column: 1;
+}
+}
+</style>
+</head>
+<body>
+<header>
+<h1>Pelas Mãos da Bahia</h1>
+<p>Cadastro de Trabalhadores Informais - Camaçari/BA</p>
+</header>
+
+<nav>
+<a href="#cadastro">Cadastre-se</a>
+<a href="#dados">Dados Reais</a>
+<a href="#historico">Histórico</a>
+<a href="#depoimentos">Depoimentos</a>
+</nav>
+
+<div class="container">
+<!-- FORMULÁRIO (LADO ESQUERDO) -->
+<section id="cadastro" class="card formulario">
+<h2>Seu Cadastro</h2>
+<form id="cadastroForm">
+<div>
+<label for="nome">Nome completo*</label>
+<input type="text" id="nome" required>
+</div>
+
+<div>
+<label for="whatsapp">WhatsApp*</label>
+<input type="tel" id="whatsapp" placeholder="(71) 9XXXX-XXXX" required>
+<p class="dica">Usado apenas para contato sobre o projeto</p>
+</div>
+
+<div>
+<label for="trabalho">Tipo de trabalho*</label>
+<select id="trabalho" required>
+<option value="">Selecione...</option>
+<option value="alimentacao">Alimentação</option>
+<option value="artesanato">Artesanato</option>
+<option value="servicos">Serviços</option>
+<option value="cultura">Cultura</option>
+</select>
+</div>
+
+<div>
+<label for="bairro">Bairro de atuação*</label>
+<input type="text" id="bairro" required>
+<p class="dica">Ex: Centro, Parque Florestal</p>
+</div>
+
+<div>
+<label for="historia">Conte sua história (opcional)</label>
+<textarea id="historia" rows="4"></textarea>
+</div>
+
+<div>
+<input type="checkbox" id="termos" required>
+<label for="termos">Autorizo o uso dos dados para pesquisa*</label>
+</div>
+
+<button type="submit">ENVIAR CADASTRO</button>
+</form>
+</section>
+
+<!-- DADOS CONTEXTUAIS (LADO DIREITO) -->
+<section class="card dados">
+<!-- DADOS ESTATÍSTICOS -->
+<div id="dados" class="dado">
+<h2>Dados Reais</h2>
+<p><strong>51,7%</strong> dos trabalhadores baianos estão no setor informal.</p>
+<p class="fonte">Fonte: IBGE Contínua, 2024</p>
+
+<table>
+<tr>
+<th>Setor em Camaçari</th>
+<th>Trabalhadores</th>
+</tr>
+<tr>
+<td>Alimentação</td>
+<td>2.332</td>
+</tr>
+<tr>
+<td>Artesanato</td>
+<td>841</td>
+</tr>
+<tr>
+<td>Serviços</td>
+<td>651</td>
+</tr>
+</table>
+<p class="fonte">Prefeitura de Camaçari, 2024</p>
+</div>
+
+<!-- HISTÓRIA -->
+<div id="historico" class="dado">
+<h2>Marcos Históricos</h2>
+<p><strong>1985:</strong> 1ª feira livre oficializada (Decreto Municipal nº 1.243/1985).</p>
+<p><strong>2002:</strong> Lei nº 2.587 regulamenta venda de alimentos tradicionais.</p>
+<p class="fonte">Diário Oficial do Município</p>
+</div>
+
+<!-- DEPOIMENTOS -->
+<div id="depoimentos" class="dado">
+<h2>Vozes da Comunidade</h2>
+<blockquote>
+"Minha família é herdeira de tabuleiro."
+</blockquote>
+<p><strong>Rita M.</strong>, Baiana de acarajé</p>
+
+<blockquote>
+"A capoeira é tudo que minha boca come."
+</blockquote>
+<p><strong>Mestre Zoreba</strong></p>
+</div>
+</section>
+</div>
+
+<footer>
+<p>Projeto documental desenvolvido pelos alunos do SESI Milton Santos, Bahia</p>
+<p>Contato: @pelasmaosdabahia</p>
+</footer>
+
+<script>
+document.getElementById('cadastroForm').addEventListener('submit', function(e) {
+e.preventDefault();
+
+// Simulação de envio
+const nome = document.getElementById('nome').value;
+alert(`Obrigado, ${nome}! Seu cadastro foi recebido.`);
+
+// Reset do formulário
+this.reset();
+
+// Aqui você pode adicionar:
+// - Integração com Google Forms
+// - Conexão com Firebase
+// - Envio para email
+});
+</script>
+</body>
+</html>
