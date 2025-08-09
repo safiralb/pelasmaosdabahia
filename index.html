@@ -1,272 +1,688 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br" class="scroll-smooth">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pelas Mãos da Bahia - Cadastro e Dados</title>
-<style>
-:root {
---azul: #1D3557;
---vermelho: #E63946;
---branco: #FFFFFF;
---bege: #F8F4EC;
-}
-body {
-font-family: 'Segoe UI', Arial, sans-serif;
-margin: 0;
-background: var(--bege);
-color: #333;
-line-height: 1.6;
-}
-header {
-background: var(--azul);
-color: white;
-padding: 1.5rem;
-text-align: center;
-}
-nav {
-background: var(--vermelho);
-padding: 1rem;
-display: flex;
-justify-content: center;
-gap: 1.5rem;
-flex-wrap: wrap;
-}
-nav a {
-color: white;
-text-decoration: none;
-font-weight: bold;
-padding: 0.5rem;
-}
-.container {
-max-width: 1200px;
-margin: 2rem auto;
-padding: 0 1rem;
-display: grid;
-grid-template-columns: 1fr 1fr;
-gap: 2rem;
-}
-.card {
-background: var(--branco);
-border-radius: 8px;
-padding: 2rem;
-box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-}
-.formulario {
-grid-column: 1;
-}
-.dados {
-grid-column: 2;
-}
-h2 {
-color: var(--azul);
-margin-top: 0;
-}
-form {
-display: grid;
-gap: 1.2rem;
-}
-input, select, textarea {
-width: 100%;
-padding: 0.8rem;
-border: 1px solid #ddd;
-border-radius: 4px;
-font-family: inherit;
-}
-button {
-background: var(--vermelho);
-color: white;
-border: none;
-padding: 1rem;
-font-size: 1.1rem;
-cursor: pointer;
-border-radius: 4px;
-margin-top: 1rem;
-transition: background 0.3s;
-}
-button:hover {
-background: #C1121F;
-}
-.dica {
-font-size: 0.9rem;
-color: #666;
-margin-top: -0.5rem;
-}
-.dado {
-margin-bottom: 1.5rem;
-padding-bottom: 1.5rem;
-border-bottom: 1px solid #eee;
-}
-.fonte {
-font-size: 0.8rem;
-color: #666;
-font-style: italic;
-}
-table {
-width: 100%;
-border-collapse: collapse;
-margin: 1rem 0;
-}
-th, td {
-border: 1px solid #ddd;
-padding: 0.5rem;
-text-align: left;
-}
-th {
-background: var(--azul);
-color: white;
-}
-footer {
-background: var(--azul);
-color: white;
-text-align: center;
-padding: 1.5rem;
-margin-top: 2rem;
-}
-@media (max-width: 768px) {
-.container {
-grid-template-columns: 1fr;
-}
-.formulario, .dados {
-grid-column: 1;
-}
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ConectaTrab - Trabalhadores Informais da Bahia</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f8fafc;
+    }
+    .tab-content {
+      display: none;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.3s ease;
+    }
+    .tab-content.active {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .highlight-card {
+      transition: all 0.3s ease;
+      border-left: 4px solid transparent;
+    }
+    .highlight-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+      border-left: 4px solid #3b82f6;
+    }
+    .pulse-animation {
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+    .sticky-tabs {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background-color: white;
+      padding: 1rem 0;
+      border-bottom: 1px solid #e2e8f0;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+  </style>
 </head>
-<body>
-<header>
-<h1>Pelas Mãos da Bahia</h1>
-<p>Cadastro de Trabalhadores Informais da Bahia</p>
-</header>
+<body class="bg-gray-50">
+  <!-- Barra de navegação por abas fixa no topo -->
+  <div class="sticky-tabs">
+    <div class="container mx-auto px-4">
+      <div class="flex overflow-x-auto pb-2 space-x-1">
+        <button onclick="showTab('inicio')" 
+                class="flex-shrink-0 px-4 py-2 rounded-lg font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition tab-button active"
+                data-tab="inicio">
+          Início
+        </button>
+        <button onclick="showTab('busca')" 
+                class="flex-shrink-0 px-4 py-2 rounded-lg font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition tab-button"
+                data-tab="busca">
+          Buscar Trabalhadores
+        </button>
+        <button onclick="showTab('cadastro')" 
+                class="flex-shrink-0 px-4 py-2 rounded-lg font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition tab-button"
+                data-tab="cadastro">
+          Cadastre-se
+        </button>
+        <button onclick="showTab('documentario')" 
+                class="flex-shrink-0 px-4 py-2 rounded-lg font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition tab-button"
+                data-tab="documentario">
+          Pelas Mãos da Bahia
+        </button>
+      </div>
+    </div>
+  </div>
 
-<nav>
-<a href="#cadastro">Cadastre-se</a>
-<a href="#dados">Dados Reais</a>
-<a href="#historico">Histórico</a>
-<a href="#depoimentos">Depoimentos</a>
-</nav>
+  <!-- Cabeçalho -->
+  <header class="bg-white shadow-md">
+    <div class="container mx-auto px-4 py-3">
+      <div class="flex justify-between items-center">
+        <div class="flex items-center space-x-3">
+          <div class="bg-blue-500 text-white p-2 rounded-lg">
+            <i data-lucide="handshake" class="w-6 h-6"></i>
+          </div>
+          <h1 class="text-2xl font-bold text-gray-800">Conecta<span class="text-blue-500">Trab</span></h1>
+        </div>
+        <button class="md:hidden p-2 rounded-lg hover:bg-gray-100">
+          <i data-lucide="menu" class="w-6 h-6"></i>
+        </button>
+      </div>
+    </div>
+  </header>
 
-<div class="container">
-<!-- FORMULÁRIO (LADO ESQUERDO) -->
-<section id="cadastro" class="card formulario">
-<h2>Seu Cadastro</h2>
-<form id="cadastroForm">
-<div>
-<label for="nome">Nome completo*</label>
-<input type="text" id="nome" required>
+  <!-- Conteúdo Principal -->
+  <main class="flex-grow container mx-auto px-4 py-8">
+    <!-- Página Início -->
+    <section id="inicio" class="tab-content active">
+      <div class="max-w-4xl mx-auto text-center mb-12">
+        <h2 class="text-4xl font-bold text-gray-800 mb-6">Valorizando quem <span class="text-blue-500">constrói</span> a Bahia</h2>
+        
+        <div class="bg-gradient-to-r from-blue-500 to-blue-600 text-white p-8 rounded-xl mb-10 pulse-animation">
+          <p class="text-xl font-medium italic">"O trabalho informal não é marginal, é essencial. Cada serviço prestado com dignidade merece reconhecimento e respeito."</p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+          <div class="bg-white p-6 rounded-xl shadow-sm highlight-card">
+            <div class="text-blue-500 mb-4">
+              <i data-lucide="users" class="w-8 h-8 mx-auto"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-800 mb-2">+3.200</h3>
+            <p class="text-gray-600">Trabalhadores cadastrados</p>
+          </div>
+          <div class="bg-white p-6 rounded-xl shadow-sm highlight-card">
+            <div class="text-blue-500 mb-4">
+              <i data-lucide="map-pin" class="w-8 h-8 mx-auto"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-800 mb-2">18</h3>
+            <p class="text-gray-600">Cidades da RMS atendidas</p>
+          </div>
+          <div class="bg-white p-6 rounded-xl shadow-sm highlight-card">
+            <div class="text-blue-500 mb-4">
+              <i data-lucide="briefcase" class="w-8 h-8 mx-auto"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-800 mb-2">+150</h3>
+            <p class="text-gray-600">Profissões diferentes</p>
+          </div>
+        </div>
+        
+        <button onclick="showTab('busca')" 
+                class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-8 rounded-lg transition inline-flex items-center shadow-lg">
+          Encontrar Trabalhadores
+          <i data-lucide="arrow-right" class="w-5 h-5 ml-2"></i>
+        </button>
+      </div>
+      
+      <div class="bg-white rounded-xl shadow-sm p-8 mb-12">
+        <h3 class="text-2xl font-bold text-center text-gray-800 mb-8">Frases que <span class="text-blue-500">inspiram</span></h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="border-l-4 border-blue-500 pl-4 py-2">
+            <p class="text-gray-700 italic">"Na feira livre da vida, cada trabalhador é um empreendedor da própria história."</p>
+          </div>
+          <div class="border-l-4 border-blue-500 pl-4 py-2">
+            <p class="text-gray-700 italic">"O suor do trabalho informal irriga as ruas da nossa economia."</p>
+          </div>
+          <div class="border-l-4 border-blue-500 pl-4 py-2">
+            <p class="text-gray-700 italic">"Seu serviço pode ser informal, mas seu valor é absolutamente real."</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Página Busca -->
+    <section id="busca" class="tab-content">
+      <div class="mb-8">
+        <h2 class="text-2xl font-bold text-gray-800 mb-6">Encontre <span class="text-blue-500">trabalhadores</span> na Região Metropolitana</h2>
+        
+        <div class="bg-white p-6 rounded-xl shadow-sm mb-8">
+          <h3 class="text-lg font-semibold text-gray-800 mb-4">Filtros de Pesquisa</h3>
+          
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div>
+              <label for="servico" class="block text-sm font-medium text-gray-700 mb-1">Serviço</label>
+              <select id="servico" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                <option value="">Todos</option>
+                <option value="construcao">Construção Civil</option>
+                <option value="alimentacao">Alimentação</option>
+                <option value="beleza">Beleza</option>
+                <option value="transporte">Transporte</option>
+                <option value="eletrica">Serviços Elétricos</option>
+                <option value="hidraulica">Hidráulica</option>
+                <option value="limpeza">Limpeza</option>
+                <option value="costura">Costura</option>
+                <option value="outros">Outros</option>
+              </select>
+            </div>
+            
+            <div>
+              <label for="cidade" class="block text-sm font-medium text-gray-700 mb-1">Cidade</label>
+              <select id="cidade" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                <option value="">Todas</option>
+                <option value="salvador">Salvador</option>
+                <option value="lauro">Lauro de Freitas</option>
+                <option value="camacari">Camaçari</option>
+                <option value="simoes">Simões Filho</option>
+                <option value="dias">Dias d'Ávila</option>
+                <option value="sao">São Francisco do Conde</option>
+                <option value="madre">Madre de Deus</option>
+                <option value="santo">Santo Amaro</option>
+                <option value="saosebastiao">São Sebastião do Passé</option>
+                <option value="candeias">Candeias</option>
+                <option value="vera">Vera Cruz</option>
+                <option value="itaparica">Itaparica</option>
+              </select>
+            </div>
+            
+            <div>
+              <label for="experiencia" class="block text-sm font-medium text-gray-700 mb-1">Experiência</label>
+              <select id="experiencia" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                <option value="">Qualquer</option>
+                <option value="2">+2 anos</option>
+                <option value="5">+5 anos</option>
+                <option value="10">+10 anos</option>
+              </select>
+            </div>
+            
+            <div class="flex items-end">
+              <button onclick="filtrarTrabalhadores()" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg transition font-medium">
+                <i data-lucide="search" class="w-4 h-4 inline mr-2"></i>
+                Filtrar
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <div id="resultados-busca" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- Trabalhador 1 -->
+          <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition-all border border-gray-100 overflow-hidden highlight-card">
+            <div class="p-6">
+              <div class="flex items-center mb-4">
+                <div class="bg-blue-100 p-2 rounded-lg mr-3">
+                  <i data-lucide="hammer" class="w-6 h-6 text-blue-500"></i>
+                </div>
+                <h3 class="text-lg font-bold text-gray-800">João da Silva</h3>
+              </div>
+              <div class="space-y-2">
+                <p class="text-gray-600"><span class="font-medium">Serviço:</span> Pedreiro</p>
+                <p class="text-gray-600"><span class="font-medium">Cidade:</span> Salvador - BA</p>
+                <p class="text-gray-600"><span class="font-medium">Experiência:</span> 10 anos</p>
+                <p class="text-gray-600"><span class="font-medium">Especialidade:</span> Alvenaria e acabamentos</p>
+                <p class="text-gray-600"><span class="font-medium">Contato:</span> (71) 98765-4321</p>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Trabalhador 2 -->
+          <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition-all border border-gray-100 overflow-hidden highlight-card">
+            <div class="p-6">
+              <div class="flex items-center mb-4">
+                <div class="bg-blue-100 p-2 rounded-lg mr-3">
+                  <i data-lucide="utensils" class="w-6 h-6 text-blue-500"></i>
+                </div>
+                <h3 class="text-lg font-bold text-gray-800">Maria Oliveira</h3>
+              </div>
+              <div class="space-y-2">
+                <p class="text-gray-600"><span class="font-medium">Serviço:</span> Cozinheira</p>
+                <p class="text-gray-600"><span class="font-medium">Cidade:</span> Lauro de Freitas - BA</p>
+                <p class="text-gray-600"><span class="font-medium">Experiência:</span> 8 anos</p>
+                <p class="text-gray-600"><span class="font-medium">Especialidade:</span> Comida baiana e doces</p>
+                <p class="text-gray-600"><span class="font-medium">Contato:</span> (71) 91234-5678</p>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Trabalhador 3 -->
+          <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition-all border border-gray-100 overflow-hidden highlight-card">
+            <div class="p-6">
+              <div class="flex items-center mb-4">
+                <div class="bg-blue-100 p-2 rounded-lg mr-3">
+                  <i data-lucide="scissors" class="w-6 h-6 text-blue-500"></i>
+                </div>
+                <h3 class="text-lg font-bold text-gray-800">Carlos Santos</h3>
+              </div>
+              <div class="space-y-2">
+                <p class="text-gray-600"><span class="font-medium">Serviço:</span> Barbeiro</p>
+                <p class="text-gray-600"><span class="font-medium">Cidade:</span> Camaçari - BA</p>
+                <p class="text-gray-600"><span class="font-medium">Experiência:</span> 6 anos</p>
+                <p class="text-gray-600"><span class="font-medium">Horário:</span> 9h às 18h (seg a sáb)</p>
+                <p class="text-gray-600"><span class="font-medium">Contato:</span> (71) 99876-5432</p>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Trabalhador 4 -->
+          <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition-all border border-gray-100 overflow-hidden highlight-card">
+            <div class="p-6">
+              <div class="flex items-center mb-4">
+                <div class="bg-blue-100 p-2 rounded-lg mr-3">
+                  <i data-lucide="truck" class="w-6 h-6 text-blue-500"></i>
+                </div>
+                <h3 class="text-lg font-bold text-gray-800">Antônio Ferreira</h3>
+              </div>
+              <div class="space-y-2">
+                <p class="text-gray-600"><span class="font-medium">Serviço:</span> Motorista</p>
+                <p class="text-gray-600"><span class="font-medium">Cidade:</span> Simões Filho - BA</p>
+                <p class="text-gray-600"><span class="font-medium">Experiência:</span> 12 anos</p>
+                <p class="text-gray-600"><span class="font-medium">Veículo:</span> Fiorino (frigorífico)</p>
+                <p class="text-gray-600"><span class="font-medium">Contato:</span> (71) 92345-6789</p>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Trabalhador 5 -->
+          <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition-all border border-gray-100 overflow-hidden highlight-card">
+            <div class="p-6">
+              <div class="flex items-center mb-4">
+                <div class="bg-blue-100 p-2 rounded-lg mr-3">
+                  <i data-lucide="home" class="w-6 h-6 text-blue-500"></i>
+                </div>
+                <h3 class="text-lg font-bold text-gray-800">Rita Souza</h3>
+              </div>
+              <div class="space-y-2">
+                <p class="text-gray-600"><span class="font-medium">Serviço:</span> Diarista</p>
+                <p class="text-gray-600"><span class="font-medium">Cidade:</span> Salvador - BA</p>
+                <p class="text-gray-600"><span class="font-medium">Experiência:</span> 15 anos</p>
+                <p class="text-gray-600"><span class="font-medium">Serviços:</span> Limpeza e organização</p>
+                <p class="text-gray-600"><span class="font-medium">Contato:</span> (71) 93456-7890</p>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Trabalhador 6 -->
+          <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition-all border border-gray-100 overflow-hidden highlight-card">
+            <div class="p-6">
+              <div class="flex items-center mb-4">
+                <div class="bg-blue-100 p-2 rounded-lg mr-3">
+                  <i data-lucide="plug" class="w-6 h-6 text-blue-500"></i>
+                </div>
+                <h3 class="text-lg font-bold text-gray-800">Marcos Lima</h3>
+              </div>
+              <div class="space-y-2">
+                <p class="text-gray-600"><span class="font-medium">Serviço:</span> Eletricista</p>
+                <p class="text-gray-600"><span class="font-medium">Cidade:</span> Salvador - BA</p>
+                <p class="text-gray-600"><span class="font-medium">Experiência:</span> 7 anos</p>
+                <p class="text-gray-600"><span class="font-medium">Atendimento:</span> 24h (emergências)</p>
+                <p class="text-gray-600"><span class="font-medium">Contato:</span> (71) 94567-8901</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Página Cadastro -->
+    <section id="cadastro" class="tab-content">
+      <div class="max-w-2xl mx-auto">
+        <h2 class="text-2xl font-bold text-gray-800 mb-6">Cadastre seu <span class="text-blue-500">trabalho</span></h2>
+        
+        <div class="bg-blue-50 border-l-4 border-blue-500 rounded-lg p-4 mb-8">
+          <p class="text-blue-700 font-medium"><i data-lucide="alert-circle" class="w-5 h-5 inline mr-2"></i> Seu cadastro é gratuito e ajuda a conectar você com mais clientes!</p>
+        </div>
+        
+        <form id="form-cadastro" class="space-y-4 bg-white p-6 rounded-xl shadow-sm">
+          <div>
+            <label for="nome" class="block text-sm font-medium text-gray-700 mb-1">Nome completo*</label>
+            <input type="text" id="nome" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
+          </div>
+          
+          <div>
+            <label for="servico" class="block text-sm font-medium text-gray-700 mb-1">Tipo de serviço*</label>
+            <select id="servico" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
+              <option value="">Selecione seu serviço...</option>
+              <option value="construcao">Construção/Reforma</option>
+              <option value="alimentacao">Alimentação</option>
+              <option value="transporte">Transporte</option>
+              <option value="beleza">Beleza</option>
+              <option value="eletrica">Serviços Elétricos</option>
+              <option value="hidraulica">Hidráulica/Encanamento</option>
+              <option value="limpeza">Limpeza/Diarista</option>
+              <option value="costura">Costura/Consertos</option>
+              <option value="outros">Outros Serviços</option>
+            </select>
+          </div>
+          
+          <div>
+            <label for="contato" class="block text-sm font-medium text-gray-700 mb-1">WhatsApp*</label>
+            <input type="tel" id="contato" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label for="cidade" class="block text-sm font-medium text-gray-700 mb-1">Cidade*</label>
+              <select id="cidade" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
+                <option value="">Selecione sua cidade...</option>
+                <option value="salvador">Salvador</option>
+                <option value="lauro">Lauro de Freitas</option>
+                <option value="camacari">Camaçari</option>
+                <option value="simoes">Simões Filho</option>
+                <option value="dias">Dias d'Ávila</option>
+                <option value="sao">São Francisco do Conde</option>
+                <option value="madre">Madre de Deus</option>
+                <option value="santo">Santo Amaro</option>
+                <option value="saosebastiao">São Sebastião do Passé</option>
+                <option value="candeias">Candeias</option>
+                <option value="vera">Vera Cruz</option>
+                <option value="itaparica">Itaparica</option>
+              </select>
+            </div>
+            
+            <div>
+              <label for="bairro" class="block text-sm font-medium text-gray-700 mb-1">Bairro*</label>
+              <input type="text" id="bairro" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
+            </div>
+          </div>
+          
+          <div>
+            <label for="experiencia" class="block text-sm font-medium text-gray-700 mb-1">Tempo de experiência*</label>
+            <select id="experiencia" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
+              <option value="">Selecione...</option>
+              <option value="1">Menos de 1 ano</option>
+              <option value="2">1-2 anos</option>
+              <option value="5">3-5 anos</option>
+              <option value="10">6-10 anos</option>
+              <option value="15">Mais de 10 anos</option>
+            </select>
+          </div>
+          
+          <div>
+            <label for="descricao" class="block text-sm font-medium text-gray-700 mb-1">Descreva seu trabalho*</label>
+            <textarea id="descricao" rows="3" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" required></textarea>
+          </div>
+          
+          <div class="flex items-start">
+            <div class="flex items-center h-5">
+              <input id="termos" type="checkbox" class="w-4 h-4 text-blue-500 border-gray-300 rounded focus:ring-blue-500" required>
+            </div>
+            <label for="termos" class="ml-2 block text-sm text-gray-700">
+              Concordo com os <a href="#" class="text-blue-500 hover:underline">Termos de Uso</a> e <a href="#" class="text-blue-500 hover:underline">Política de Privacidade</a>*
+            </label>
+          </div>
+          
+          <button type="submit" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-3 px-4 rounded-lg transition flex items-center justify-center shadow-md">
+            <i data-lucide="user-plus" class="w-5 h-5 mr-2"></i>
+            Cadastrar
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- Página Documentário -->
+    <section id="documentario" class="tab-content">
+      <div class="max-w-4xl mx-auto">
+        <h2 class="text-2xl font-bold text-gray-800 mb-6"><span class="text-blue-500">Pelas Mãos</span> da Bahia</h2>
+        
+        <div class="bg-blue-50 rounded-xl p-6 mb-8 border-l-4 border-blue-500">
+          <p class="text-blue-700 font-medium italic">"Por trás de cada serviço informal, há uma história de resistência, criatividade e dignidade."</p>
+        </div>
+        
+        <div class="space-y-6 mb-8">
+          <h3 class="text-xl font-bold text-gray-800">Sobre o projeto</h3>
+          <p class="text-gray-700">
+            "Pelas Mãos da Bahia" é um documentário que mergulha nas realidades dos trabalhadores informais da Região Metropolitana de Salvador, capturando suas histórias de vida, desafios diários e a importância fundamental de seu trabalho para a economia local.
+          </p>
+          <p class="text-gray-700">
+            Através de entrevistas emocionantes e registros do cotidiano, revelamos como esses profissionais constroem, com suas próprias mãos, não apenas seu sustento, mas também as bases da nossa comunidade.
+          </p>
+        </div>
+        
+        <div class="bg-white rounded-xl shadow-sm p-6 mb-8">
+          <h3 class="text-xl font-bold text-gray-800 mb-4">Depoimentos marcantes</h3>
+          
+          <div class="space-y-4">
+            <div class="border-l-4 border-blue-500 pl-4 py-2">
+              <p class="text-gray-700 italic">"O documentário mostrou o que a gente sente no dia a dia. Que nosso trabalho vale, mesmo sem carteira assinada."</p>
+              <p class="text-blue-500 font-medium mt-2">— Seu Zé, Vendedor de Coco (Salvador)</p>
+            </div>
+            
+            <div class="border-l-4 border-blue-500 pl-4 py-2">
+              <p class="text-gray-700 italic">"Depois que participei, meus clientes aumentaram. As pessoas passaram a me ver com outros olhos."</p>
+              <p class="text-blue-500 font-medium mt-2">— Dona Marta, Diarista (Lauro de Freitas)</p>
+            </div>
+            
+            <div class="border-l-4 border-blue-500 pl-4 py-2">
+              <p class="text-gray-700 italic">"Aprendi que meu trabalho tem valor. Não é só 'bico', é profissão."</p>
+              <p class="text-blue-500 font-medium mt-2">— Carlos, Pedreiro (Camaçari)</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="thumbnail-container bg-white rounded-xl shadow-sm p-6 mb-8 text-center">
+  <h3 class="text-xl font-bold text-gray-800 mb-4">Trailer Completo</h3>
+  
+  <a href="https://youtu.be/54n74Y60C-w" target="_blank" class="block relative">
+    <!-- Thumbnail do vídeo -->
+    <img src="https://img.youtube.com/vi/54n74Y60C-w/maxresdefault.jpg" 
+         alt="Thumbnail do documentário Pelas Mãos da Bahia"
+         class="w-full rounded-lg mb-2 border border-gray-200">
+    
+    <!-- Botão de play -->
+    <div class="absolute inset-0 flex items-center justify-center">
+      <div class="bg-red-600 text-white rounded-full p-4 hover:bg-red-700 transition">
+        <i data-lucide="play" class="w-8 h-8"></i>
+      </div>
+    </div>
+  </a>
+  
+  <p class="text-gray-600 mt-4">Duração: 39 segundos | Classificação: Livre</p>
 </div>
-
-<div>
-<label for="whatsapp">WhatsApp*</label>
-<input type="tel" id="whatsapp" placeholder="(71) 9XXXX-XXXX" required>
-<p class="dica">Usado apenas para contato sobre o projeto</p>
+        <div class="bg-blue-50 rounded-xl p-6">
+          <h3 class="text-xl font-bold text-gray-800 mb-4">Participe ou saiba mais</h3>
+          <p class="text-gray-700 mb-4">Quer compartilhar sua história ou apoiar o projeto?</p>
+           <div class="bg-blue-50 rounded-xl p-6 mt-8">
+  <h3 class="text-xl font-bold text-gray-800 mb-4">Siga-nos no Instagram</h3>
+  <p class="text-gray-700 mb-4">Acompanhe as histórias dos trabalhadores em nosso perfil:</p>
+  
+  <a href="https://www.instagram.com/pelasmaosdabahia?igsh=MXU4NGZncHhrdHVodw==" 
+     target="_blank"
+     class="inline-flex items-center bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-medium py-3 px-6 rounded-lg transition shadow-lg">
+    <i data-lucide="instagram" class="w-5 h-5 mr-2"></i>
+    @pelasmaosdabahia
+  </a>
+  
+  <p class="text-gray-500 text-sm mt-3">
+    <i data-lucide="info" class="w-4 h-4 inline mr-1"></i>
+    Você será redirecionado para nosso Instagram
+  </p>
 </div>
+          <div class="flex flex-col sm:flex-row gap-3">
+            <a href="#" class="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg transition inline-flex items-center justify-center">
+              <i data-lucide="mail" class="w-4 h-4 mr-2"></i>
+              @pelasmaosdabahia
+            </a>
+            <a href="#" class="bg-white hover:bg-gray-50 text-gray-800 font-medium py-2 px-4 rounded-lg transition inline-flex items-center justify-center border border-gray-300">
+              <i data-lucide="instagram" class="w-4 h-4 mr-2"></i>
+              Instagram
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
 
-<div>
-<label for="trabalho">Tipo de trabalho*</label>
-<select id="trabalho" required>
-<option value="">Selecione...</option>
-<option value="alimentacao">Alimentação</option>
-<option value="artesanato">Artesanato</option>
-<option value="servicos">Serviços</option>
-<option value="cultura">Cultura</option>
-</select>
-</div>
+  <!-- Rodapé -->
+  <footer class="bg-gray-800 text-white py-8">
+    <div class="container mx-auto px-4">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div>
+          <h3 class="text-lg font-bold mb-4 flex items-center">
+            <span class="bg-blue-500 text-white p-1 rounded-lg mr-2">
+              <i data-lucide="handshake" class="w-5 h-5"></i>
+            </span>
+            Conecta<span class="text-blue-300">Trab</span>
+          </h3>
+          <p class="text-gray-400">Conectando trabalhadores informais da Bahia com quem precisa de seus serviços.</p>
+        </div>
+        <div>
+          <h3 class="text-lg font-semibold mb-4">Links Úteis</h3>
+          <ul class="space-y-2">
+            <li><a href="#" class="text-gray-400 hover:text-white transition">Termos de Uso</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white transition">Política de Privacidade</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white transition">Dúvidas Frequentes</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="text-lg font-semibold mb-4">Contato</h3>
+          <ul class="space-y-2">
+            <li class="flex items-center">
+              <i data-lucide="mail" class="w-4 h-4 mr-2 text-gray-400"></i>
+              <span class="text-gray-400">@pelasmaosdabahia</span>
+            </li>
+            <li class="flex items-center">
+              <i data-lucide="phone" class="w-4 h-4 mr-2 text-gray-400"></i>
+              <span class="text-gray-400">(71) 1234-5678</span>
+            </li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="text-lg font-semibold mb-4">Redes Sociais</h3>
+          <div class="flex space-x-4">
+            <a href="#" class="text-gray-400 hover:text-white transition">
+              <i data-lucide="facebook" class="w-5 h-5"></i>
+            </a>
+            <a href="#" class="text-gray-400 hover:text-white transition">
+              <i data-lucide="instagram" class="w-5 h-5"></i>
+            </a>
+            <a href="#" class="text-gray-400 hover:text-white transition">
+              <i data-lucide="youtube" class="w-5 h-5"></i>
+            </a>
+            <a href="#" class="text-gray-400 hover:text-white transition">
+              <i data-lucide="whatsapp" class="w-5 h-5"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="border-t border-gray-700 mt-8 pt-6 text-center text-gray-400">
+        <p>© 2025 ConectaTrab - Todos os direitos reservados</p>
+      </div>
+    </div>
+  </footer>
 
-<div>
-<label for="bairro">Bairro de atuação*</label>
-<input type="text" id="bairro" required>
-<p class="dica">Ex: Centro, Parque Florestal</p>
-</div>
-
-<div>
-<label for="historia">Conte sua história (opcional)</label>
-<textarea id="historia" rows="4"></textarea>
-</div>
-
-<div>
-<input type="checkbox" id="termos" required>
-<label for="termos">Autorizo o uso dos dados para pesquisa*</label>
-</div>
-
-<button type="submit">ENVIAR CADASTRO</button>
-</form>
-</section>
-
-<!-- DADOS CONTEXTUAIS (LADO DIREITO) -->
-<section class="card dados">
-<!-- DADOS ESTATÍSTICOS -->
-<div id="dados" class="dado">
-<h2>Dados Reais</h2>
-<p><strong>51,7%</strong> dos trabalhadores baianos estão no setor informal.</p>
-<p class="fonte">Fonte: IBGE, 2024</p>
-
-<table>
-<tr>
-<th>Setor em Camaçari</th>
-<th>Trabalhadores</th>
-</tr>
-<tr>
-<td>Alimentação</td>
-<td>2.332</td>
-</tr>
-<tr>
-<td>Artesanato</td>
-<td>841</td>
-</tr>
-<tr>
-<td>Serviços</td>
-<td>651</td>
-</tr>
-</table>
-<p class="fonte">Prefeitura de Camaçari, 2024</p>
-</div>
-
-<!-- HISTÓRIA -->
-<div id="historico" class="dado">
-<h2>Marcos Históricos</h2>
-<p><strong>1985:</strong> 1ª feira livre oficializada (Decreto Municipal nº 1.243/1985).</p>
-<p><strong>2002:</strong> Lei nº 2.587 regulamenta venda de alimentos tradicionais.</p>
-<p class="fonte">Diário Oficial do Município</p>
-</div>
-
-<!-- DEPOIMENTOS -->
-<div id="depoimentos" class="dado">
-<h2>Vozes da Comunidade</h2>
-<blockquote>
-"Minha família é herdeira de tabuleiro."
-</blockquote>
-<p><strong>Rita M.</strong>, Baiana de acarajé</p>
-
-<blockquote>
-"A capoeira é tudo que minha boca come."
-</blockquote>
-<p><strong>Mestre Orelha</strong></p>
-</div>
-</section>
-</div>
-
-<footer>
-<p>Projeto documental desenvolvido pelos alunos do SESI Milton Santos, Bahia</p>
-<p>Contato: @pelasmaosdabahia</p>
-</footer>
-
-<script>
-document.getElementById('cadastroForm').addEventListener('submit', function(e) {
-e.preventDefault();
-
-// Simulação de envio
-const nome = document.getElementById('nome').value;
-alert(`Obrigado, ${nome}! Seu cadastro foi recebido.`);
-
-// Reset do formulário
-this.reset();
-
-// Aqui você pode adicionar:
-// - Integração com Google Forms
-// - Conexão com Firebase
-// - Envio para email
-});
-</script>
+  <!-- JavaScript -->
+  <script>
+    // Inicializar ícones
+    lucide.createIcons();
+    
+    // Mostrar aba selecionada
+    function showTab(tabId) {
+      // Esconder todas as abas
+      document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      
+      // Mostrar a aba selecionada
+      const tabToShow = document.getElementById(tabId);
+      if (tabToShow) {
+        tabToShow.classList.add('active');
+      }
+      
+      // Atualizar botões ativos
+      document.querySelectorAll('.tab-button').forEach(button => {
+        button.classList.remove('active');
+        if (button.getAttribute('data-tab') === tabId) {
+          button.classList.add('active');
+        }
+      });
+      
+      // Rolagem suave para o topo
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      
+      // Atualizar URL sem recarregar a página
+      history.pushState(null, null, `#${tabId}`);
+    }
+    
+    // Filtrar trabalhadores
+    function filtrarTrabalhadores() {
+const servico = document.getElementById('servico').value;
+      const cidade = document.getElementById('cidade').value;
+      const experiencia = document.getElementById('experiencia').value;
+      
+      console.log(`Filtros aplicados:
+        Serviço: ${servico || 'Todos'}
+        Cidade: ${cidade || 'Todas'}
+        Experiência: ${experiencia || 'Qualquer'}`);
+      
+      // Aqui você implementaria a lógica real de filtragem
+      alert(`Filtros aplicados:\nServiço: ${servico || 'Todos'}\nCidade: ${cidade || 'Todas'}\nExperiência: ${experiencia || 'Qualquer'}`);
+    }
+    
+    // Formulário de cadastro
+    document.getElementById('form-cadastro')?.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      // Validação
+      if (!document.getElementById('termos').checked) {
+        alert('Por favor, aceite os termos de uso');
+        return;
+      }
+      
+      // Simular envio do formulário
+      alert('Cadastro enviado com sucesso! Em breve entraremos em contato.');
+      this.reset();
+      
+      // Mostrar mensagem de sucesso
+      const successMsg = document.createElement('div');
+      successMsg.className = 'bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4 rounded-lg';
+      successMsg.innerHTML = `
+        <div class="flex items-center">
+          <i data-lucide="check-circle" class="w-5 h-5 mr-2"></i>
+          <p>Seu cadastro foi recebido! Em breve aparecerá na busca.</p>
+        </div>
+      `;
+      
+      this.prepend(successMsg);
+      lucide.createIcons();
+    });
+    
+    // Verificar hash na URL ao carregar
+    window.addEventListener('DOMContentLoaded', function() {
+      const initialTab = window.location.hash.substring(1) || 'inicio';
+      showTab(initialTab);
+      
+      // Adicionar botões de contato nos cards
+      document.querySelectorAll('.highlight-card').forEach(card => {
+        const contactBtn = document.createElement('button');
+        contactBtn.className = 'mt-4 bg-blue-500 hover:bg-blue-600 text-white text-sm py-2 px-4 rounded-lg transition flex items-center justify-center w-full';
+        contactBtn.innerHTML = `
+          <i data-lucide="phone" class="w-4 h-4 mr-2"></i>
+          Contatar
+        `;
+        contactBtn.addEventListener('click', function() {
+          const phone = card.querySelector('p:last-child').textContent.replace('Contato: ', '');
+          alert(`Ligando para: ${phone}\nEsta é uma demonstração. Em um sistema real, abriria o WhatsApp.`);
+        });
+        
+        card.querySelector('.space-y-2').appendChild(contactBtn);
+      });
+      
+      // Atualizar ícones
+      lucide.createIcons();
+    });
+  </script>
 </body>
 </html>
