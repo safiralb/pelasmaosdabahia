@@ -1,688 +1,3308 @@
 <!DOCTYPE html>
-<html lang="pt-br" class="scroll-smooth">
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ConectaTrab - Trabalhadores Informais da Bahia</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/lucide@latest"></script>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
-    body {
-      font-family: 'Poppins', sans-serif;
-      background-color: #f8fafc;
-    }
-    .tab-content {
-      display: none;
-      opacity: 0;
-      transform: translateY(10px);
-      transition: all 0.3s ease;
-    }
-    .tab-content.active {
-      display: block;
-      opacity: 1;
-      transform: translateY(0);
-    }
-    .highlight-card {
-      transition: all 0.3s ease;
-      border-left: 4px solid transparent;
-    }
-    .highlight-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
-      border-left: 4px solid #3b82f6;
-    }
-    .pulse-animation {
-      animation: pulse 2s infinite;
-    }
-    @keyframes pulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-      100% { transform: scale(1); }
-    }
-    .sticky-tabs {
-      position: sticky;
-      top: 0;
-      z-index: 20;
-      background-color: white;
-      padding: 1rem 0;
-      border-bottom: 1px solid #e2e8f0;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FomeZeroBrasil - Unindo empresas contra a fome</title>
+
+<!-- Meta tags para SEO -->
+<meta name="description" content="FomeZeroBrasil - Conectamos grandes empresas com ONGs que combatem a insegurança alimentar no Brasil">
+<meta name="keywords" content="fome, doação, ONG, Brasil, segurança alimentar, FomeZeroBrasil">
+<meta name="author" content="FomeZeroBrasil">
+
+<!-- Open Graph -->
+<meta property="og:title" content="FomeZeroBrasil - Unindo empresas contra a fome">
+<meta property="og:description" content="Conectamos grandes empresas com ONGs que combatem a insegurança alimentar">
+<meta property="og:type" content="website">
+
+<!-- Links externos -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700&family=Poppins:wght@500;600&display=swap" rel="stylesheet">
+
+<!-- Favicon -->
+<link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%232E8B57'/><path d='M50 20 L80 50 L50 80 L20 50 Z' fill='white'/></svg>">
+
+<style>
+/* === ESTILOS GERAIS === */
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+
+:root {
+--primary-color: #2E8B57;
+--primary-dark: #1f6e45;
+--secondary-color: #1E5A8A;
+--accent-color: #4CAF50;
+--accent-hover: #3d8b40;
+--light-color: #F8F9FA;
+--dark-color: #2D3748;
+--gray-color: #718096;
+--white: #FFFFFF;
+--shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+--shadow-hover: 0 8px 30px rgba(0, 0, 0, 0.12);
+--transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+--border-radius: 12px;
+}
+
+html {
+scroll-behavior: smooth;
+}
+
+body {
+font-family: 'Inter', sans-serif;
+line-height: 1.6;
+color: var(--dark-color);
+background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+min-height: 100vh;
+}
+
+.container {
+width: 90%;
+max-width: 1200px;
+margin: 0 auto;
+padding: 0 20px;
+}
+
+/* === BACKGROUNDS DAS PÁGINAS === */
+#home {
+background: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)),
+url('https://images.unsplash.com/photo-1542838132-92c53300491e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80');
+background-size: cover;
+background-attachment: fixed;
+}
+
+#quem-somos {
+background: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)),
+url('https://images.unsplash.com/photo-1559027615-cd4628902d4a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80');
+background-size: cover;
+background-attachment: fixed;
+}
+
+#ongs {
+background: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)),
+url('https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80');
+background-size: cover;
+background-attachment: fixed;
+}
+
+#doadores {
+background: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)),
+url('https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80');
+background-size: cover;
+background-attachment: fixed;
+}
+
+#como-doar {
+background: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)),
+url('https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80');
+background-size: cover;
+background-attachment: fixed;
+}
+
+#cadastre-se {
+background: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)),
+url('https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80');
+background-size: cover;
+background-attachment: fixed;
+}
+
+#mapa-fome {
+background: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)),
+url('https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80');
+background-size: cover;
+background-attachment: fixed;
+}
+
+/* === SELETOR DE IDIOMA === */
+.language-selector {
+position: fixed;
+top: 20px;
+right: 20px;
+z-index: 1001;
+display: flex;
+gap: 8px;
+background: rgba(255, 255, 255, 0.95);
+backdrop-filter: blur(10px);
+padding: 8px;
+border-radius: 50px;
+box-shadow: var(--shadow);
+border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.lang-btn {
+background: transparent;
+border: 2px solid transparent;
+border-radius: 50%;
+padding: 8px;
+cursor: pointer;
+font-size: 1.2rem;
+transition: var(--transition);
+width: 40px;
+height: 40px;
+display: flex;
+align-items: center;
+justify-content: center;
+font-weight: 600;
+}
+
+.lang-btn:hover {
+transform: translateY(-2px);
+background: var(--light-color);
+}
+
+.lang-btn.active {
+border-color: var(--primary-color);
+background: var(--primary-color);
+color: var(--white);
+box-shadow: 0 4px 12px rgba(46, 139, 87, 0.3);
+}
+
+/* === LOGO E MENU DE NAVEGAÇÃO === */
+.navbar {
+background: rgba(255, 255, 255, 0.95);
+backdrop-filter: blur(10px);
+box-shadow: var(--shadow);
+position: fixed;
+top: 0;
+width: 100%;
+z-index: 1000;
+padding: 0;
+border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.nav-container {
+display: flex;
+justify-content: center;
+align-items: center;
+padding: 1rem 2rem;
+position: relative;
+}
+
+.nav-logo {
+position: absolute;
+left: 2rem;
+display: flex;
+align-items: center;
+gap: 12px;
+font-size: 1.8rem;
+font-weight: 700;
+color: var(--primary-color);
+font-family: 'Playfair Display', serif;
+}
+
+.logo-img {
+width: 40px;
+height: 40px;
+background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+border-radius: 8px;
+display: flex;
+align-items: center;
+justify-content: center;
+color: white;
+font-weight: bold;
+font-size: 1.2rem;
+}
+
+.nav-logo-link {
+text-decoration: none;
+color: inherit;
+display: flex;
+align-items: center;
+gap: 12px;
+}
+
+.nav-menu {
+display: flex;
+list-style: none;
+gap: 2.5rem;
+align-items: center;
+}
+
+.nav-link {
+text-decoration: none;
+color: var(--dark-color);
+font-weight: 500;
+transition: var(--transition);
+padding: 0.8rem 1.2rem;
+border-radius: 25px;
+position: relative;
+font-size: 0.95rem;
+font-family: 'Inter', sans-serif;
+}
+
+.nav-link:hover {
+color: var(--primary-color);
+background: rgba(46, 139, 87, 0.1);
+transform: translateY(-2px);
+}
+
+.nav-link.active {
+color: var(--primary-color);
+background: rgba(46, 139, 87, 0.15);
+font-weight: 600;
+}
+
+.hamburger {
+display: none;
+flex-direction: column;
+cursor: pointer;
+padding: 8px;
+}
+
+.bar {
+width: 25px;
+height: 3px;
+background-color: var(--dark-color);
+margin: 3px 0;
+transition: var(--transition);
+border-radius: 2px;
+}
+
+/* === HERO SECTION === */
+.hero {
+background: linear-gradient(135deg,
+rgba(46, 139, 87, 0.85) 0%,
+rgba(30, 90, 138, 0.85) 100%),
+url('https://images.unsplash.com/photo-1542838132-92c53300491e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1600&q=80');
+background-size: cover;
+background-position: center;
+height: 85vh;
+display: flex;
+align-items: center;
+justify-content: center;
+text-align: center;
+color: var(--white);
+margin-top: 80px;
+position: relative;
+overflow: hidden;
+}
+
+.hero-content {
+max-width: 800px;
+padding: 0 20px;
+position: relative;
+z-index: 2;
+}
+
+.hero-title {
+font-size: 3.5rem;
+margin-bottom: 1.5rem;
+font-weight: 700;
+text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+color: #ffffff;
+font-family: 'Playfair Display', serif;
+}
+
+.hero-subtitle {
+font-size: 1.4rem;
+margin-bottom: 2.5rem;
+text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+opacity: 0.95;
+font-weight: 300;
+font-family: 'Inter', sans-serif;
+}
+
+.cta-button {
+display: inline-flex;
+align-items: center;
+gap: 12px;
+background: linear-gradient(135deg, var(--accent-color), var(--accent-hover));
+color: var(--white);
+padding: 18px 36px;
+border-radius: 50px;
+text-decoration: none;
+font-weight: 600;
+font-size: 1.1rem;
+transition: var(--transition);
+box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+animation: pulse 2s infinite;
+border: none;
+cursor: pointer;
+font-family: 'Poppins', sans-serif;
+}
+
+.cta-button:hover {
+transform: translateY(-3px) scale(1.05);
+box-shadow: 0 12px 35px rgba(76, 175, 80, 0.6);
+}
+
+@keyframes pulse {
+0%, 100% {
+box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+transform: scale(1);
+}
+50% {
+box-shadow: 0 8px 35px rgba(76, 175, 80, 0.8);
+transform: scale(1.02);
+}
+}
+
+/* === CARROSSEL === */
+.carousel-section {
+background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+padding: 4rem 0;
+text-align: center;
+position: relative;
+overflow: hidden;
+}
+
+.carousel-container {
+position: relative;
+max-width: 900px;
+margin: 0 auto;
+overflow: hidden;
+height: 120px;
+border-radius: var(--border-radius);
+background: rgba(255, 255, 255, 0.1);
+backdrop-filter: blur(10px);
+padding: 20px;
+}
+
+.carousel-slide {
+position: absolute;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+display: flex;
+align-items: center;
+justify-content: center;
+opacity: 0;
+transition: all 0.6s ease;
+transform: translateX(50px);
+}
+
+.carousel-slide.active {
+opacity: 1;
+transform: translateX(0);
+}
+
+.carousel-text {
+font-size: 1.4rem;
+font-weight: 600;
+color: var(--white);
+text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+font-family: 'Inter', sans-serif;
+}
+
+.carousel-indicators {
+display: flex;
+justify-content: center;
+margin-top: 2rem;
+gap: 12px;
+}
+
+.indicator {
+width: 14px;
+height: 14px;
+border-radius: 50%;
+background: rgba(255, 255, 255, 0.5);
+cursor: pointer;
+transition: var(--transition);
+border: 2px solid transparent;
+}
+
+.indicator.active {
+background: var(--white);
+transform: scale(1.2);
+box-shadow: 0 2px 8px rgba(255, 255, 255, 0.5);
+}
+
+.indicator:hover {
+background: var(--white);
+transform: scale(1.1);
+}
+
+/* === SEÇÃO DE DESTAQUE === */
+.highlight-section {
+padding: 6rem 0;
+position: relative;
+}
+
+.highlight-section::before {
+content: '';
+position: absolute;
+top: 0;
+left: 0;
+right: 0;
+height: 2px;
+background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
+}
+
+.highlight-section h2 {
+text-align: center;
+margin-bottom: 4rem;
+font-size: 2.8rem;
+color: var(--secondary-color);
+font-weight: 700;
+position: relative;
+font-family: 'Playfair Display', serif;
+}
+
+.highlight-section h2::after {
+content: '';
+position: absolute;
+bottom: -10px;
+left: 50%;
+transform: translateX(-50%);
+width: 80px;
+height: 4px;
+background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+border-radius: 2px;
+}
+
+.highlight-cards {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+gap: 2.5rem;
+margin-top: 2rem;
+}
+
+.highlight-card {
+background: var(--white);
+border-radius: var(--border-radius);
+padding: 3rem 2rem;
+text-align: center;
+box-shadow: var(--shadow);
+transition: var(--transition);
+border: 1px solid rgba(0, 0, 0, 0.05);
+position: relative;
+overflow: hidden;
+}
+
+.highlight-card::before {
+content: '';
+position: absolute;
+top: 0;
+left: 0;
+right: 0;
+height: 4px;
+background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+}
+
+.highlight-card:hover {
+transform: translateY(-12px);
+box-shadow: var(--shadow-hover);
+}
+
+.highlight-icon {
+width: 80px;
+height: 80px;
+margin: 0 auto 1.5rem;
+background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+border-radius: 50%;
+display: flex;
+align-items: center;
+justify-content: center;
+color: white;
+font-size: 2rem;
+}
+
+.highlight-card h3 {
+margin-bottom: 1.2rem;
+color: var(--primary-color);
+font-size: 1.4rem;
+font-weight: 600;
+font-family: 'Poppins', sans-serif;
+}
+
+.highlight-card p {
+color: var(--gray-color);
+line-height: 1.7;
+font-family: 'Inter', sans-serif;
+}
+
+/* === ESTILOS PARA AS OUTRAS SEÇÕES === */
+.content-page {
+padding: 120px 0 60px;
+min-height: 80vh;
+}
+
+.page-title {
+text-align: center;
+margin-bottom: 3rem;
+color: var(--secondary-color);
+font-size: 2.8rem;
+font-weight: 700;
+position: relative;
+font-family: 'Playfair Display', serif;
+}
+
+.page-title::after {
+content: '';
+position: absolute;
+bottom: -10px;
+left: 50%;
+transform: translateX(-50%);
+width: 60px;
+height: 4px;
+background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+border-radius: 2px;
+}
+
+/* === SISTEMA DE FILTROS === */
+.filters-container {
+background: var(--white);
+padding: 2rem;
+border-radius: var(--border-radius);
+box-shadow: var(--shadow);
+margin-bottom: 3rem;
+}
+
+.filters-grid {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+gap: 1.5rem;
+margin-bottom: 1.5rem;
+}
+
+.filter-group {
+display: flex;
+flex-direction: column;
+gap: 0.5rem;
+}
+
+.filter-label {
+font-weight: 600;
+color: var(--dark-color);
+font-family: 'Poppins', sans-serif;
+}
+
+.filter-select {
+padding: 0.75rem;
+border: 1px solid var(--gray-color);
+border-radius: 8px;
+font-size: 1rem;
+transition: var(--transition);
+font-family: 'Inter', sans-serif;
+background-color: white;
+/* Remove scroll e mostra todas opções */
+-webkit-appearance: menulist;
+-moz-appearance: menulist;
+appearance: menulist;
+height: auto;
+}
+
+.filter-select:focus {
+outline: none;
+border-color: var(--primary-color);
+box-shadow: 0 0 0 3px rgba(46, 139, 87, 0.1);
+}
+
+.filter-reset {
+background: var(--gray-color);
+color: var(--white);
+border: none;
+padding: 0.75rem 1.5rem;
+border-radius: 8px;
+cursor: pointer;
+transition: var(--transition);
+font-family: 'Poppins', sans-serif;
+}
+
+.filter-reset:hover {
+background: #5a6268;
+}
+
+.transparency-panel {
+background: var(--light-color);
+padding: 2rem;
+border-radius: var(--border-radius);
+margin-top: 2rem;
+}
+
+.transparency-grid {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+gap: 1.5rem;
+margin-top: 1rem;
+}
+
+.transparency-item {
+text-align: center;
+padding: 1.5rem;
+background: var(--white);
+border-radius: var(--border-radius);
+box-shadow: var(--shadow);
+}
+
+/* === RODAPÉ === */
+.footer {
+background: linear-gradient(135deg, var(--dark-color) 0%, #2D3748 100%);
+color: var(--white);
+padding: 4rem 0 1rem;
+position: relative;
+}
+
+.footer::before {
+content: '';
+position: absolute;
+top: 0;
+left: 0;
+right: 0;
+height: 2px;
+background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+}
+
+.footer-content {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+gap: 3rem;
+margin-bottom: 3rem;
+}
+
+.footer-logo h2 {
+color: var(--primary-color);
+margin-bottom: 1rem;
+font-size: 2rem;
+font-family: 'Playfair Display', serif;
+}
+
+.footer-links h3,
+.footer-contact h3 {
+margin-bottom: 1.5rem;
+color: var(--primary-color);
+font-size: 1.2rem;
+font-family: 'Poppins', sans-serif;
+}
+
+.footer-links ul {
+list-style: none;
+}
+
+.footer-links li {
+margin-bottom: 0.8rem;
+}
+
+.footer-links a {
+color: var(--light-color);
+text-decoration: none;
+transition: var(--transition);
+display: flex;
+align-items: center;
+gap: 8px;
+font-family: 'Inter', sans-serif;
+}
+
+.footer-links a:hover {
+color: var(--primary-color);
+transform: translateX(5px);
+}
+
+.social-icons {
+display: flex;
+gap: 1rem;
+margin-top: 1.5rem;
+}
+
+.social-icons a {
+color: var(--white);
+font-size: 1.5rem;
+transition: var(--transition);
+padding: 10px;
+border-radius: 50%;
+background: rgba(255, 255, 255, 0.1);
+}
+
+.social-icons a:hover {
+color: var(--primary-color);
+background: rgba(255, 255, 255, 0.2);
+transform: translateY(-3px);
+}
+
+.footer-bottom {
+text-align: center;
+padding-top: 2rem;
+border-top: 1px solid rgba(255, 255, 255, 0.1);
+color: var(--gray-color);
+font-family: 'Inter', sans-serif;
+}
+
+/* === RESPONSIVIDADE === */
+@media (max-width: 968px) {
+.nav-menu {
+gap: 1.5rem;
+}
+
+.nav-link {
+padding: 0.6rem 1rem;
+font-size: 0.9rem;
+}
+
+.hero-title {
+font-size: 2.8rem;
+}
+
+.highlight-cards {
+grid-template-columns: 1fr;
+gap: 2rem;
+}
+
+.filters-grid {
+grid-template-columns: 1fr;
+}
+}
+
+@media (max-width: 768px) {
+.nav-container {
+justify-content: space-between;
+}
+
+.nav-logo {
+position: static;
+}
+
+.nav-menu {
+position: fixed;
+left: -100%;
+top: 80px;
+flex-direction: column;
+background: rgba(255, 255, 255, 0.98);
+backdrop-filter: blur(20px);
+width: 100%;
+text-align: center;
+transition: var(--transition);
+box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+padding: 2rem 0;
+gap: 0;
+}
+
+.nav-menu.active {
+left: 0;
+}
+
+.nav-item {
+width: 100%;
+}
+
+.nav-link {
+display: block;
+padding: 1rem 2rem;
+border-radius: 0;
+border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.hamburger {
+display: flex;
+}
+
+.hamburger.active .bar:nth-child(2) {
+opacity: 0;
+}
+
+.hamburger.active .bar:nth-child(1) {
+transform: translateY(8px) rotate(45deg);
+}
+
+.hamburger.active .bar:nth-child(3) {
+transform: translateY(-8px) rotate(-45deg);
+}
+
+.hero-title {
+font-size: 2.2rem;
+}
+
+.hero-subtitle {
+font-size: 1.1rem;
+}
+
+.carousel-text {
+font-size: 1.1rem;
+}
+
+.language-selector {
+top: 15px;
+right: 15px;
+}
+}
+
+/* === ANIMAÇÕES DE ENTRADA === */
+@keyframes fadeInUp {
+from {
+opacity: 0;
+transform: translateY(30px);
+}
+to {
+opacity: 1;
+transform: translateY(0);
+}
+}
+
+.fade-in {
+animation: fadeInUp 0.8s ease-out;
+}
+
+/* === ESTILOS ESPECÍFICOS DO MAPA === */
+#map-container {
+position: relative;
+height: 600px;
+margin: 2rem 0;
+border-radius: var(--border-radius);
+overflow: hidden;
+box-shadow: var(--shadow);
+border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+#map {
+height: 100%;
+width: 100%;
+}
+
+#legend {
+position: absolute;
+bottom: 20px;
+right: 20px;
+background: rgba(255, 255, 255, 0.95);
+backdrop-filter: blur(10px);
+padding: 15px;
+border-radius: var(--border-radius);
+box-shadow: var(--shadow);
+z-index: 1000;
+max-width: 200px;
+border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+#legend h4 {
+margin: 0 0 12px;
+font-size: 0.9rem;
+color: var(--dark-color);
+font-weight: 600;
+font-family: 'Poppins', sans-serif;
+}
+
+.legend-item {
+display: flex;
+align-items: center;
+margin-bottom: 6px;
+}
+
+.legend-color {
+width: 20px;
+height: 15px;
+margin-right: 10px;
+border: 1px solid rgba(0, 0, 0, 0.2);
+border-radius: 3px;
+}
+
+.state-tooltip {
+background: rgba(255, 255, 255, 0.95) !important;
+backdrop-filter: blur(10px);
+border: 1px solid rgba(0, 0, 0, 0.1) !important;
+border-radius: 8px !important;
+box-shadow: var(--shadow) !important;
+font-family: 'Inter', sans-serif !important;
+}
+
+.state-area {
+transition: all 0.3s ease !important;
+}
+
+/* === ESTILOS PARA FORMULÁRIOS === */
+.form-container {
+max-width: 600px;
+margin: 0 auto;
+background: var(--white);
+padding: 3rem;
+border-radius: var(--border-radius);
+box-shadow: var(--shadow);
+border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.form-group {
+margin-bottom: 1.5rem;
+}
+
+.form-label {
+display: block;
+margin-bottom: 0.5rem;
+font-weight: 500;
+color: var(--dark-color);
+font-family: 'Poppins', sans-serif;
+}
+
+.form-input,
+.form-select,
+.form-textarea {
+width: 100%;
+padding: 0.75rem;
+border: 1px solid var(--gray-color);
+border-radius: 8px;
+font-size: 1rem;
+transition: var(--transition);
+font-family: 'Inter', sans-serif;
+}
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+outline: none;
+border-color: var(--primary-color);
+box-shadow: 0 0 0 3px rgba(46, 139, 87, 0.1);
+}
+
+.form-textarea {
+min-height: 120px;
+resize: vertical;
+}
+
+.submit-button {
+background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+color: var(--white);
+border: none;
+padding: 1rem 2rem;
+border-radius: 8px;
+font-size: 1rem;
+cursor: pointer;
+transition: var(--transition);
+width: 100%;
+font-weight: 600;
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 8px;
+font-family: 'Poppins', sans-serif;
+}
+
+.submit-button:hover {
+transform: translateY(-2px);
+box-shadow: 0 6px 20px rgba(46, 139, 87, 0.4);
+}
+
+.ong-cards {
+display: grid;
+grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+gap: 2rem;
+margin-top: 2rem;
+}
+
+.ong-card {
+background: var(--white);
+border-radius: var(--border-radius);
+overflow: hidden;
+box-shadow: var(--shadow);
+transition: var(--transition);
+border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.ong-card:hover {
+transform: translateY(-8px);
+box-shadow: var(--shadow-hover);
+}
+
+.ong-card-header {
+background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+color: var(--white);
+padding: 1.5rem;
+position: relative;
+}
+
+.ong-card-header::after {
+content: '';
+position: absolute;
+bottom: 0;
+left: 0;
+right: 0;
+height: 3px;
+background: linear-gradient(90deg, var(--accent-color), transparent);
+}
+
+.ong-card-body {
+padding: 1.5rem;
+}
+
+.ong-card-footer {
+padding: 1rem 1.5rem;
+background-color: var(--light-color);
+text-align: center;
+}
+
+.ong-button {
+background: linear-gradient(135deg, var(--secondary-color), #154a75);
+color: var(--white);
+border: none;
+padding: 0.75rem 1.5rem;
+border-radius: 6px;
+cursor: pointer;
+transition: var(--transition);
+font-weight: 500;
+width: 100%;
+font-family: 'Poppins', sans-serif;
+}
+
+.ong-button:hover {
+transform: translateY(-2px);
+box-shadow: 0 4px 12px rgba(30, 90, 138, 0.4);
+}
+
+.steps-container {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+gap: 2rem;
+margin: 3rem 0;
+}
+
+.step {
+text-align: center;
+padding: 2rem;
+background: var(--white);
+border-radius: var(--border-radius);
+box-shadow: var(--shadow);
+transition: var(--transition);
+position: relative;
+}
+
+.step:hover {
+transform: translateY(-5px);
+box-shadow: var(--shadow-hover);
+}
+
+.step-icon {
+width: 80px;
+height: 80px;
+background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+color: var(--white);
+border-radius: 50%;
+display: flex;
+align-items: center;
+justify-content: center;
+margin: 0 auto 1.5rem;
+font-size: 2rem;
+position: relative;
+}
+
+.step-number {
+position: absolute;
+top: -5px;
+right: -5px;
+background: var(--accent-color);
+color: var(--white);
+width: 30px;
+height: 30px;
+border-radius: 50%;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 0.9rem;
+font-weight: 700;
+box-shadow: 0 2px 8px rgba(76, 175, 80, 0.4);
+}
+
+/* === MODAL === */
+.modal {
+display: none;
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background-color: rgba(0, 0, 0, 0.5);
+z-index: 2000;
+align-items: center;
+justify-content: center;
+backdrop-filter: blur(5px);
+}
+
+.modal-content {
+background-color: var(--white);
+border-radius: var(--border-radius);
+width: 90%;
+max-width: 600px;
+padding: 2rem;
+position: relative;
+max-height: 90vh;
+overflow-y: auto;
+box-shadow: var(--shadow-hover);
+}
+
+.modal-close {
+position: absolute;
+top: 1rem;
+right: 1rem;
+background: none;
+border: none;
+font-size: 1.5rem;
+cursor: pointer;
+color: var(--gray-color);
+transition: var(--transition);
+padding: 5px;
+border-radius: 50%;
+}
+
+.modal-close:hover {
+color: var(--dark-color);
+background: rgba(0, 0, 0, 0.05);
+}
+
+/* === PÁGINAS ESCONDIDAS === */
+.page {
+display: none;
+}
+
+.page.active {
+display: block;
+}
+
+.page-subtitle {
+text-align: center;
+margin-bottom: 3rem;
+color: var(--gray-color);
+font-size: 1.2rem;
+font-family: 'Inter', sans-serif;
+}
+
+/* === MELHORIAS DE ACESSIBILIDADE === */
+.sr-only {
+position: absolute;
+width: 1px;
+height: 1px;
+padding: 0;
+margin: -1px;
+overflow: hidden;
+clip: rect(0, 0, 0, 0);
+white-space: nowrap;
+border: 0;
+}
+
+/* === MELHORIAS DE FORMULÁRIOS === */
+.form-feedback {
+display: none;
+padding: 12px;
+margin-top: 15px;
+border-radius: 8px;
+font-weight: 500;
+font-family: 'Inter', sans-serif;
+}
+
+.form-feedback.success {
+display: block;
+background-color: #d4edda;
+color: #155724;
+border: 1px solid #c3e6cb;
+}
+
+.form-feedback.error {
+display: block;
+background-color: #f8d7da;
+color: #721c24;
+border: 1px solid #f5c6cb;
+}
+
+.form-input.error {
+border-color: #dc3545;
+}
+
+.form-input.success {
+border-color: #28a745;
+}
+
+/* === ESTILOS PARA DADOS ESTATÍSTICOS === */
+.stats-grid {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+gap: 2rem;
+margin: 3rem 0;
+}
+
+.stat-card {
+background: var(--white);
+padding: 2rem;
+border-radius: var(--border-radius);
+box-shadow: var(--shadow);
+text-align: center;
+border-left: 4px solid var(--primary-color);
+}
+
+.stat-number {
+font-size: 2.5rem;
+font-weight: 700;
+color: var(--primary-color);
+margin-bottom: 0.5rem;
+font-family: 'Playfair Display', serif;
+}
+
+.stat-label {
+color: var(--gray-color);
+font-size: 1rem;
+font-family: 'Inter', sans-serif;
+}
+
+.comparison-table {
+width: 100%;
+border-collapse: collapse;
+margin: 2rem 0;
+background: var(--white);
+border-radius: var(--border-radius);
+overflow: hidden;
+box-shadow: var(--shadow);
+}
+
+.comparison-table th,
+.comparison-table td {
+padding: 1rem;
+text-align: left;
+border-bottom: 1px solid #e2e8f0;
+}
+
+.comparison-table th {
+background: var(--primary-color);
+color: var(--white);
+font-weight: 600;
+font-family: 'Poppins', sans-serif;
+}
+
+.comparison-table tr:hover {
+background: #f7fafc;
+}
+
+.region-high {
+color: #e53e3e;
+font-weight: 600;
+}
+
+.region-low {
+color: #38a169;
+font-weight: 600;
+}
+</style>
 </head>
-<body class="bg-gray-50">
-  <!-- Barra de navegação por abas fixa no topo -->
-  <div class="sticky-tabs">
-    <div class="container mx-auto px-4">
-      <div class="flex overflow-x-auto pb-2 space-x-1">
-        <button onclick="showTab('inicio')" 
-                class="flex-shrink-0 px-4 py-2 rounded-lg font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition tab-button active"
-                data-tab="inicio">
-          Início
-        </button>
-        <button onclick="showTab('busca')" 
-                class="flex-shrink-0 px-4 py-2 rounded-lg font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition tab-button"
-                data-tab="busca">
-          Buscar Trabalhadores
-        </button>
-        <button onclick="showTab('cadastro')" 
-                class="flex-shrink-0 px-4 py-2 rounded-lg font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition tab-button"
-                data-tab="cadastro">
-          Cadastre-se
-        </button>
-        <button onclick="showTab('documentario')" 
-                class="flex-shrink-0 px-4 py-2 rounded-lg font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition tab-button"
-                data-tab="documentario">
-          Pelas Mãos da Bahia
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Cabeçalho -->
-  <header class="bg-white shadow-md">
-    <div class="container mx-auto px-4 py-3">
-      <div class="flex justify-between items-center">
-        <div class="flex items-center space-x-3">
-          <div class="bg-blue-500 text-white p-2 rounded-lg">
-            <i data-lucide="handshake" class="w-6 h-6"></i>
-          </div>
-          <h1 class="text-2xl font-bold text-gray-800">Conecta<span class="text-blue-500">Trab</span></h1>
-        </div>
-        <button class="md:hidden p-2 rounded-lg hover:bg-gray-100">
-          <i data-lucide="menu" class="w-6 h-6"></i>
-        </button>
-      </div>
-    </div>
-  </header>
-
-  <!-- Conteúdo Principal -->
-  <main class="flex-grow container mx-auto px-4 py-8">
-    <!-- Página Início -->
-    <section id="inicio" class="tab-content active">
-      <div class="max-w-4xl mx-auto text-center mb-12">
-        <h2 class="text-4xl font-bold text-gray-800 mb-6">Valorizando quem <span class="text-blue-500">constrói</span> a Bahia</h2>
-        
-        <div class="bg-gradient-to-r from-blue-500 to-blue-600 text-white p-8 rounded-xl mb-10 pulse-animation">
-          <p class="text-xl font-medium italic">"O trabalho informal não é marginal, é essencial. Cada serviço prestado com dignidade merece reconhecimento e respeito."</p>
-        </div>
-        
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-          <div class="bg-white p-6 rounded-xl shadow-sm highlight-card">
-            <div class="text-blue-500 mb-4">
-              <i data-lucide="users" class="w-8 h-8 mx-auto"></i>
-            </div>
-            <h3 class="text-xl font-bold text-gray-800 mb-2">+3.200</h3>
-            <p class="text-gray-600">Trabalhadores cadastrados</p>
-          </div>
-          <div class="bg-white p-6 rounded-xl shadow-sm highlight-card">
-            <div class="text-blue-500 mb-4">
-              <i data-lucide="map-pin" class="w-8 h-8 mx-auto"></i>
-            </div>
-            <h3 class="text-xl font-bold text-gray-800 mb-2">18</h3>
-            <p class="text-gray-600">Cidades da RMS atendidas</p>
-          </div>
-          <div class="bg-white p-6 rounded-xl shadow-sm highlight-card">
-            <div class="text-blue-500 mb-4">
-              <i data-lucide="briefcase" class="w-8 h-8 mx-auto"></i>
-            </div>
-            <h3 class="text-xl font-bold text-gray-800 mb-2">+150</h3>
-            <p class="text-gray-600">Profissões diferentes</p>
-          </div>
-        </div>
-        
-        <button onclick="showTab('busca')" 
-                class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-8 rounded-lg transition inline-flex items-center shadow-lg">
-          Encontrar Trabalhadores
-          <i data-lucide="arrow-right" class="w-5 h-5 ml-2"></i>
-        </button>
-      </div>
-      
-      <div class="bg-white rounded-xl shadow-sm p-8 mb-12">
-        <h3 class="text-2xl font-bold text-center text-gray-800 mb-8">Frases que <span class="text-blue-500">inspiram</span></h3>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div class="border-l-4 border-blue-500 pl-4 py-2">
-            <p class="text-gray-700 italic">"Na feira livre da vida, cada trabalhador é um empreendedor da própria história."</p>
-          </div>
-          <div class="border-l-4 border-blue-500 pl-4 py-2">
-            <p class="text-gray-700 italic">"O suor do trabalho informal irriga as ruas da nossa economia."</p>
-          </div>
-          <div class="border-l-4 border-blue-500 pl-4 py-2">
-            <p class="text-gray-700 italic">"Seu serviço pode ser informal, mas seu valor é absolutamente real."</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Página Busca -->
-    <section id="busca" class="tab-content">
-      <div class="mb-8">
-        <h2 class="text-2xl font-bold text-gray-800 mb-6">Encontre <span class="text-blue-500">trabalhadores</span> na Região Metropolitana</h2>
-        
-        <div class="bg-white p-6 rounded-xl shadow-sm mb-8">
-          <h3 class="text-lg font-semibold text-gray-800 mb-4">Filtros de Pesquisa</h3>
-          
-          <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div>
-              <label for="servico" class="block text-sm font-medium text-gray-700 mb-1">Serviço</label>
-              <select id="servico" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                <option value="">Todos</option>
-                <option value="construcao">Construção Civil</option>
-                <option value="alimentacao">Alimentação</option>
-                <option value="beleza">Beleza</option>
-                <option value="transporte">Transporte</option>
-                <option value="eletrica">Serviços Elétricos</option>
-                <option value="hidraulica">Hidráulica</option>
-                <option value="limpeza">Limpeza</option>
-                <option value="costura">Costura</option>
-                <option value="outros">Outros</option>
-              </select>
-            </div>
-            
-            <div>
-              <label for="cidade" class="block text-sm font-medium text-gray-700 mb-1">Cidade</label>
-              <select id="cidade" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                <option value="">Todas</option>
-                <option value="salvador">Salvador</option>
-                <option value="lauro">Lauro de Freitas</option>
-                <option value="camacari">Camaçari</option>
-                <option value="simoes">Simões Filho</option>
-                <option value="dias">Dias d'Ávila</option>
-                <option value="sao">São Francisco do Conde</option>
-                <option value="madre">Madre de Deus</option>
-                <option value="santo">Santo Amaro</option>
-                <option value="saosebastiao">São Sebastião do Passé</option>
-                <option value="candeias">Candeias</option>
-                <option value="vera">Vera Cruz</option>
-                <option value="itaparica">Itaparica</option>
-              </select>
-            </div>
-            
-            <div>
-              <label for="experiencia" class="block text-sm font-medium text-gray-700 mb-1">Experiência</label>
-              <select id="experiencia" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                <option value="">Qualquer</option>
-                <option value="2">+2 anos</option>
-                <option value="5">+5 anos</option>
-                <option value="10">+10 anos</option>
-              </select>
-            </div>
-            
-            <div class="flex items-end">
-              <button onclick="filtrarTrabalhadores()" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg transition font-medium">
-                <i data-lucide="search" class="w-4 h-4 inline mr-2"></i>
-                Filtrar
-              </button>
-            </div>
-          </div>
-        </div>
-        
-        <div id="resultados-busca" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <!-- Trabalhador 1 -->
-          <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition-all border border-gray-100 overflow-hidden highlight-card">
-            <div class="p-6">
-              <div class="flex items-center mb-4">
-                <div class="bg-blue-100 p-2 rounded-lg mr-3">
-                  <i data-lucide="hammer" class="w-6 h-6 text-blue-500"></i>
-                </div>
-                <h3 class="text-lg font-bold text-gray-800">João da Silva</h3>
-              </div>
-              <div class="space-y-2">
-                <p class="text-gray-600"><span class="font-medium">Serviço:</span> Pedreiro</p>
-                <p class="text-gray-600"><span class="font-medium">Cidade:</span> Salvador - BA</p>
-                <p class="text-gray-600"><span class="font-medium">Experiência:</span> 10 anos</p>
-                <p class="text-gray-600"><span class="font-medium">Especialidade:</span> Alvenaria e acabamentos</p>
-                <p class="text-gray-600"><span class="font-medium">Contato:</span> (71) 98765-4321</p>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Trabalhador 2 -->
-          <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition-all border border-gray-100 overflow-hidden highlight-card">
-            <div class="p-6">
-              <div class="flex items-center mb-4">
-                <div class="bg-blue-100 p-2 rounded-lg mr-3">
-                  <i data-lucide="utensils" class="w-6 h-6 text-blue-500"></i>
-                </div>
-                <h3 class="text-lg font-bold text-gray-800">Maria Oliveira</h3>
-              </div>
-              <div class="space-y-2">
-                <p class="text-gray-600"><span class="font-medium">Serviço:</span> Cozinheira</p>
-                <p class="text-gray-600"><span class="font-medium">Cidade:</span> Lauro de Freitas - BA</p>
-                <p class="text-gray-600"><span class="font-medium">Experiência:</span> 8 anos</p>
-                <p class="text-gray-600"><span class="font-medium">Especialidade:</span> Comida baiana e doces</p>
-                <p class="text-gray-600"><span class="font-medium">Contato:</span> (71) 91234-5678</p>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Trabalhador 3 -->
-          <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition-all border border-gray-100 overflow-hidden highlight-card">
-            <div class="p-6">
-              <div class="flex items-center mb-4">
-                <div class="bg-blue-100 p-2 rounded-lg mr-3">
-                  <i data-lucide="scissors" class="w-6 h-6 text-blue-500"></i>
-                </div>
-                <h3 class="text-lg font-bold text-gray-800">Carlos Santos</h3>
-              </div>
-              <div class="space-y-2">
-                <p class="text-gray-600"><span class="font-medium">Serviço:</span> Barbeiro</p>
-                <p class="text-gray-600"><span class="font-medium">Cidade:</span> Camaçari - BA</p>
-                <p class="text-gray-600"><span class="font-medium">Experiência:</span> 6 anos</p>
-                <p class="text-gray-600"><span class="font-medium">Horário:</span> 9h às 18h (seg a sáb)</p>
-                <p class="text-gray-600"><span class="font-medium">Contato:</span> (71) 99876-5432</p>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Trabalhador 4 -->
-          <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition-all border border-gray-100 overflow-hidden highlight-card">
-            <div class="p-6">
-              <div class="flex items-center mb-4">
-                <div class="bg-blue-100 p-2 rounded-lg mr-3">
-                  <i data-lucide="truck" class="w-6 h-6 text-blue-500"></i>
-                </div>
-                <h3 class="text-lg font-bold text-gray-800">Antônio Ferreira</h3>
-              </div>
-              <div class="space-y-2">
-                <p class="text-gray-600"><span class="font-medium">Serviço:</span> Motorista</p>
-                <p class="text-gray-600"><span class="font-medium">Cidade:</span> Simões Filho - BA</p>
-                <p class="text-gray-600"><span class="font-medium">Experiência:</span> 12 anos</p>
-                <p class="text-gray-600"><span class="font-medium">Veículo:</span> Fiorino (frigorífico)</p>
-                <p class="text-gray-600"><span class="font-medium">Contato:</span> (71) 92345-6789</p>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Trabalhador 5 -->
-          <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition-all border border-gray-100 overflow-hidden highlight-card">
-            <div class="p-6">
-              <div class="flex items-center mb-4">
-                <div class="bg-blue-100 p-2 rounded-lg mr-3">
-                  <i data-lucide="home" class="w-6 h-6 text-blue-500"></i>
-                </div>
-                <h3 class="text-lg font-bold text-gray-800">Rita Souza</h3>
-              </div>
-              <div class="space-y-2">
-                <p class="text-gray-600"><span class="font-medium">Serviço:</span> Diarista</p>
-                <p class="text-gray-600"><span class="font-medium">Cidade:</span> Salvador - BA</p>
-                <p class="text-gray-600"><span class="font-medium">Experiência:</span> 15 anos</p>
-                <p class="text-gray-600"><span class="font-medium">Serviços:</span> Limpeza e organização</p>
-                <p class="text-gray-600"><span class="font-medium">Contato:</span> (71) 93456-7890</p>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Trabalhador 6 -->
-          <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition-all border border-gray-100 overflow-hidden highlight-card">
-            <div class="p-6">
-              <div class="flex items-center mb-4">
-                <div class="bg-blue-100 p-2 rounded-lg mr-3">
-                  <i data-lucide="plug" class="w-6 h-6 text-blue-500"></i>
-                </div>
-                <h3 class="text-lg font-bold text-gray-800">Marcos Lima</h3>
-              </div>
-              <div class="space-y-2">
-                <p class="text-gray-600"><span class="font-medium">Serviço:</span> Eletricista</p>
-                <p class="text-gray-600"><span class="font-medium">Cidade:</span> Salvador - BA</p>
-                <p class="text-gray-600"><span class="font-medium">Experiência:</span> 7 anos</p>
-                <p class="text-gray-600"><span class="font-medium">Atendimento:</span> 24h (emergências)</p>
-                <p class="text-gray-600"><span class="font-medium">Contato:</span> (71) 94567-8901</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Página Cadastro -->
-    <section id="cadastro" class="tab-content">
-      <div class="max-w-2xl mx-auto">
-        <h2 class="text-2xl font-bold text-gray-800 mb-6">Cadastre seu <span class="text-blue-500">trabalho</span></h2>
-        
-        <div class="bg-blue-50 border-l-4 border-blue-500 rounded-lg p-4 mb-8">
-          <p class="text-blue-700 font-medium"><i data-lucide="alert-circle" class="w-5 h-5 inline mr-2"></i> Seu cadastro é gratuito e ajuda a conectar você com mais clientes!</p>
-        </div>
-        
-        <form id="form-cadastro" class="space-y-4 bg-white p-6 rounded-xl shadow-sm">
-          <div>
-            <label for="nome" class="block text-sm font-medium text-gray-700 mb-1">Nome completo*</label>
-            <input type="text" id="nome" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
-          </div>
-          
-          <div>
-            <label for="servico" class="block text-sm font-medium text-gray-700 mb-1">Tipo de serviço*</label>
-            <select id="servico" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
-              <option value="">Selecione seu serviço...</option>
-              <option value="construcao">Construção/Reforma</option>
-              <option value="alimentacao">Alimentação</option>
-              <option value="transporte">Transporte</option>
-              <option value="beleza">Beleza</option>
-              <option value="eletrica">Serviços Elétricos</option>
-              <option value="hidraulica">Hidráulica/Encanamento</option>
-              <option value="limpeza">Limpeza/Diarista</option>
-              <option value="costura">Costura/Consertos</option>
-              <option value="outros">Outros Serviços</option>
-            </select>
-          </div>
-          
-          <div>
-            <label for="contato" class="block text-sm font-medium text-gray-700 mb-1">WhatsApp*</label>
-            <input type="tel" id="contato" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
-          </div>
-          
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label for="cidade" class="block text-sm font-medium text-gray-700 mb-1">Cidade*</label>
-              <select id="cidade" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
-                <option value="">Selecione sua cidade...</option>
-                <option value="salvador">Salvador</option>
-                <option value="lauro">Lauro de Freitas</option>
-                <option value="camacari">Camaçari</option>
-                <option value="simoes">Simões Filho</option>
-                <option value="dias">Dias d'Ávila</option>
-                <option value="sao">São Francisco do Conde</option>
-                <option value="madre">Madre de Deus</option>
-                <option value="santo">Santo Amaro</option>
-                <option value="saosebastiao">São Sebastião do Passé</option>
-                <option value="candeias">Candeias</option>
-                <option value="vera">Vera Cruz</option>
-                <option value="itaparica">Itaparica</option>
-              </select>
-            </div>
-            
-            <div>
-              <label for="bairro" class="block text-sm font-medium text-gray-700 mb-1">Bairro*</label>
-              <input type="text" id="bairro" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
-            </div>
-          </div>
-          
-          <div>
-            <label for="experiencia" class="block text-sm font-medium text-gray-700 mb-1">Tempo de experiência*</label>
-            <select id="experiencia" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
-              <option value="">Selecione...</option>
-              <option value="1">Menos de 1 ano</option>
-              <option value="2">1-2 anos</option>
-              <option value="5">3-5 anos</option>
-              <option value="10">6-10 anos</option>
-              <option value="15">Mais de 10 anos</option>
-            </select>
-          </div>
-          
-          <div>
-            <label for="descricao" class="block text-sm font-medium text-gray-700 mb-1">Descreva seu trabalho*</label>
-            <textarea id="descricao" rows="3" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" required></textarea>
-          </div>
-          
-          <div class="flex items-start">
-            <div class="flex items-center h-5">
-              <input id="termos" type="checkbox" class="w-4 h-4 text-blue-500 border-gray-300 rounded focus:ring-blue-500" required>
-            </div>
-            <label for="termos" class="ml-2 block text-sm text-gray-700">
-              Concordo com os <a href="#" class="text-blue-500 hover:underline">Termos de Uso</a> e <a href="#" class="text-blue-500 hover:underline">Política de Privacidade</a>*
-            </label>
-          </div>
-          
-          <button type="submit" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-3 px-4 rounded-lg transition flex items-center justify-center shadow-md">
-            <i data-lucide="user-plus" class="w-5 h-5 mr-2"></i>
-            Cadastrar
-          </button>
-        </form>
-      </div>
-    </section>
-
-    <!-- Página Documentário -->
-    <section id="documentario" class="tab-content">
-      <div class="max-w-4xl mx-auto">
-        <h2 class="text-2xl font-bold text-gray-800 mb-6"><span class="text-blue-500">Pelas Mãos</span> da Bahia</h2>
-        
-        <div class="bg-blue-50 rounded-xl p-6 mb-8 border-l-4 border-blue-500">
-          <p class="text-blue-700 font-medium italic">"Por trás de cada serviço informal, há uma história de resistência, criatividade e dignidade."</p>
-        </div>
-        
-        <div class="space-y-6 mb-8">
-          <h3 class="text-xl font-bold text-gray-800">Sobre o projeto</h3>
-          <p class="text-gray-700">
-            "Pelas Mãos da Bahia" é um documentário que mergulha nas realidades dos trabalhadores informais da Região Metropolitana de Salvador, capturando suas histórias de vida, desafios diários e a importância fundamental de seu trabalho para a economia local.
-          </p>
-          <p class="text-gray-700">
-            Através de entrevistas emocionantes e registros do cotidiano, revelamos como esses profissionais constroem, com suas próprias mãos, não apenas seu sustento, mas também as bases da nossa comunidade.
-          </p>
-        </div>
-        
-        <div class="bg-white rounded-xl shadow-sm p-6 mb-8">
-          <h3 class="text-xl font-bold text-gray-800 mb-4">Depoimentos marcantes</h3>
-          
-          <div class="space-y-4">
-            <div class="border-l-4 border-blue-500 pl-4 py-2">
-              <p class="text-gray-700 italic">"O documentário mostrou o que a gente sente no dia a dia. Que nosso trabalho vale, mesmo sem carteira assinada."</p>
-              <p class="text-blue-500 font-medium mt-2">— Seu Zé, Vendedor de Coco (Salvador)</p>
-            </div>
-            
-            <div class="border-l-4 border-blue-500 pl-4 py-2">
-              <p class="text-gray-700 italic">"Depois que participei, meus clientes aumentaram. As pessoas passaram a me ver com outros olhos."</p>
-              <p class="text-blue-500 font-medium mt-2">— Dona Marta, Diarista (Lauro de Freitas)</p>
-            </div>
-            
-            <div class="border-l-4 border-blue-500 pl-4 py-2">
-              <p class="text-gray-700 italic">"Aprendi que meu trabalho tem valor. Não é só 'bico', é profissão."</p>
-              <p class="text-blue-500 font-medium mt-2">— Carlos, Pedreiro (Camaçari)</p>
-            </div>
-          </div>
-        </div>
-        
-        <div class="thumbnail-container bg-white rounded-xl shadow-sm p-6 mb-8 text-center">
-  <h3 class="text-xl font-bold text-gray-800 mb-4">Trailer Completo</h3>
-  
-  <a href="https://youtu.be/54n74Y60C-w" target="_blank" class="block relative">
-    <!-- Thumbnail do vídeo -->
-    <img src="https://img.youtube.com/vi/54n74Y60C-w/maxresdefault.jpg" 
-         alt="Thumbnail do documentário Pelas Mãos da Bahia"
-         class="w-full rounded-lg mb-2 border border-gray-200">
-    
-    <!-- Botão de play -->
-    <div class="absolute inset-0 flex items-center justify-center">
-      <div class="bg-red-600 text-white rounded-full p-4 hover:bg-red-700 transition">
-        <i data-lucide="play" class="w-8 h-8"></i>
-      </div>
-    </div>
-  </a>
-  
-  <p class="text-gray-600 mt-4">Duração: 39 segundos | Classificação: Livre</p>
+<body>
+<!-- Seletor de Idioma -->
+<div class="language-selector">
+<button class="lang-btn active" data-lang="pt" title="Português">PT</button>
+<button class="lang-btn" data-lang="en" title="English">EN</button>
+<button class="lang-btn" data-lang="es" title="Español">ES</button>
 </div>
-        <div class="bg-blue-50 rounded-xl p-6">
-          <h3 class="text-xl font-bold text-gray-800 mb-4">Participe ou saiba mais</h3>
-          <p class="text-gray-700 mb-4">Quer compartilhar sua história ou apoiar o projeto?</p>
-           <div class="bg-blue-50 rounded-xl p-6 mt-8">
-  <h3 class="text-xl font-bold text-gray-800 mb-4">Siga-nos no Instagram</h3>
-  <p class="text-gray-700 mb-4">Acompanhe as histórias dos trabalhadores em nosso perfil:</p>
-  
-  <a href="https://www.instagram.com/pelasmaosdabahia?igsh=MXU4NGZncHhrdHVodw==" 
-     target="_blank"
-     class="inline-flex items-center bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-medium py-3 px-6 rounded-lg transition shadow-lg">
-    <i data-lucide="instagram" class="w-5 h-5 mr-2"></i>
-    @pelasmaosdabahia
-  </a>
-  
-  <p class="text-gray-500 text-sm mt-3">
-    <i data-lucide="info" class="w-4 h-4 inline mr-1"></i>
-    Você será redirecionado para nosso Instagram
-  </p>
+
+<!-- Menu de Navegação -->
+<nav class="navbar">
+<div class="nav-container">
+<div class="nav-logo">
+<a href="#home" class="nav-logo-link page-link" data-page="home">
+<div class="logo-img">FZB</div>
+<span data-key="site-name">FomeZeroBrasil</span>
+</a>
 </div>
-          <div class="flex flex-col sm:flex-row gap-3">
-            <a href="#" class="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg transition inline-flex items-center justify-center">
-              <i data-lucide="mail" class="w-4 h-4 mr-2"></i>
-              @pelasmaosdabahia
-            </a>
-            <a href="#" class="bg-white hover:bg-gray-50 text-gray-800 font-medium py-2 px-4 rounded-lg transition inline-flex items-center justify-center border border-gray-300">
-              <i data-lucide="instagram" class="w-4 h-4 mr-2"></i>
-              Instagram
-            </a>
-          </div>
-        </div>
-      </div>
-    </section>
-  </main>
+<ul class="nav-menu">
+<li class="nav-item"><a href="#home" class="nav-link page-link active" data-page="home" data-key="home">Home</a></li>
+<li class="nav-item"><a href="#quem-somos" class="nav-link page-link" data-page="quem-somos" data-key="about">Quem Somos</a></li>
+<li class="nav-item"><a href="#ongs" class="nav-link page-link" data-page="ongs" data-key="ngos">ONGs</a></li>
+<li class="nav-item"><a href="#doadores" class="nav-link page-link" data-page="doadores" data-key="donors">Doadores</a></li>
+<li class="nav-item"><a href="#como-doar" class="nav-link page-link" data-page="como-doar" data-key="how-to-donate">Como Doar</a></li>
+<li class="nav-item"><a href="#cadastre-se" class="nav-link page-link" data-page="cadastre-se" data-key="register">Cadastre-se</a></li>
+<li class="nav-item"><a href="#mapa-fome" class="nav-link page-link" data-page="mapa-fome" data-key="hunger-map">Mapa da Fome</a></li>
+</ul>
+<div class="hamburger">
+<span class="bar"></span>
+<span class="bar"></span>
+<span class="bar"></span>
+</div>
+</div>
+</nav>
 
-  <!-- Rodapé -->
-  <footer class="bg-gray-800 text-white py-8">
-    <div class="container mx-auto px-4">
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-        <div>
-          <h3 class="text-lg font-bold mb-4 flex items-center">
-            <span class="bg-blue-500 text-white p-1 rounded-lg mr-2">
-              <i data-lucide="handshake" class="w-5 h-5"></i>
-            </span>
-            Conecta<span class="text-blue-300">Trab</span>
-          </h3>
-          <p class="text-gray-400">Conectando trabalhadores informais da Bahia com quem precisa de seus serviços.</p>
-        </div>
-        <div>
-          <h3 class="text-lg font-semibold mb-4">Links Úteis</h3>
-          <ul class="space-y-2">
-            <li><a href="#" class="text-gray-400 hover:text-white transition">Termos de Uso</a></li>
-            <li><a href="#" class="text-gray-400 hover:text-white transition">Política de Privacidade</a></li>
-            <li><a href="#" class="text-gray-400 hover:text-white transition">Dúvidas Frequentes</a></li>
-          </ul>
-        </div>
-        <div>
-          <h3 class="text-lg font-semibold mb-4">Contato</h3>
-          <ul class="space-y-2">
-            <li class="flex items-center">
-              <i data-lucide="mail" class="w-4 h-4 mr-2 text-gray-400"></i>
-              <span class="text-gray-400">@pelasmaosdabahia</span>
-            </li>
-            <li class="flex items-center">
-              <i data-lucide="phone" class="w-4 h-4 mr-2 text-gray-400"></i>
-              <span class="text-gray-400">(71) 1234-5678</span>
-            </li>
-          </ul>
-        </div>
-        <div>
-          <h3 class="text-lg font-semibold mb-4">Redes Sociais</h3>
-          <div class="flex space-x-4">
-            <a href="#" class="text-gray-400 hover:text-white transition">
-              <i data-lucide="facebook" class="w-5 h-5"></i>
-            </a>
-            <a href="#" class="text-gray-400 hover:text-white transition">
-              <i data-lucide="instagram" class="w-5 h-5"></i>
-            </a>
-            <a href="#" class="text-gray-400 hover:text-white transition">
-              <i data-lucide="youtube" class="w-5 h-5"></i>
-            </a>
-            <a href="#" class="text-gray-400 hover:text-white transition">
-              <i data-lucide="whatsapp" class="w-5 h-5"></i>
-            </a>
-          </div>
-        </div>
-      </div>
-      <div class="border-t border-gray-700 mt-8 pt-6 text-center text-gray-400">
-        <p>© 2025 ConectaTrab - Todos os direitos reservados</p>
-      </div>
-    </div>
-  </footer>
+<!-- PÁGINA HOME -->
+<div id="home" class="page active">
+<!-- Banner Principal -->
+<section class="hero">
+<div class="hero-content">
+<h1 class="hero-title" data-key="hero-title">FomeZeroBrasil: Unindo empresas contra a fome</h1>
+<p class="hero-subtitle" data-key="hero-subtitle">Conectamos grandes empresas com ONGs que combatem a insegurança alimentar</p>
+<a href="#como-doar" class="cta-button page-link" data-page="como-doar" data-key="donate-now">
+<span data-key="donate-now">Doe Agora</span>
+</a>
+</div>
+</section>
 
-  <!-- JavaScript -->
-  <script>
-    // Inicializar ícones
-    lucide.createIcons();
-    
-    // Mostrar aba selecionada
-    function showTab(tabId) {
-      // Esconder todas as abas
-      document.querySelectorAll('.tab-content').forEach(tab => {
-        tab.classList.remove('active');
-      });
-      
-      // Mostrar a aba selecionada
-      const tabToShow = document.getElementById(tabId);
-      if (tabToShow) {
-        tabToShow.classList.add('active');
-      }
-      
-      // Atualizar botões ativos
-      document.querySelectorAll('.tab-button').forEach(button => {
-        button.classList.remove('active');
-        if (button.getAttribute('data-tab') === tabId) {
-          button.classList.add('active');
-        }
-      });
-      
-      // Rolagem suave para o topo
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      
-      // Atualizar URL sem recarregar a página
-      history.pushState(null, null, `#${tabId}`);
-    }
-    
-    // Filtrar trabalhadores
-    function filtrarTrabalhadores() {
-const servico = document.getElementById('servico').value;
-      const cidade = document.getElementById('cidade').value;
-      const experiencia = document.getElementById('experiencia').value;
-      
-      console.log(`Filtros aplicados:
-        Serviço: ${servico || 'Todos'}
-        Cidade: ${cidade || 'Todas'}
-        Experiência: ${experiencia || 'Qualquer'}`);
-      
-      // Aqui você implementaria a lógica real de filtragem
-      alert(`Filtros aplicados:\nServiço: ${servico || 'Todos'}\nCidade: ${cidade || 'Todas'}\nExperiência: ${experiencia || 'Qualquer'}`);
-    }
-    
-    // Formulário de cadastro
-    document.getElementById('form-cadastro')?.addEventListener('submit', function(e) {
-      e.preventDefault();
-      
-      // Validação
-      if (!document.getElementById('termos').checked) {
-        alert('Por favor, aceite os termos de uso');
-        return;
-      }
-      
-      // Simular envio do formulário
-      alert('Cadastro enviado com sucesso! Em breve entraremos em contato.');
-      this.reset();
-      
-      // Mostrar mensagem de sucesso
-      const successMsg = document.createElement('div');
-      successMsg.className = 'bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4 rounded-lg';
-      successMsg.innerHTML = `
-        <div class="flex items-center">
-          <i data-lucide="check-circle" class="w-5 h-5 mr-2"></i>
-          <p>Seu cadastro foi recebido! Em breve aparecerá na busca.</p>
-        </div>
-      `;
-      
-      this.prepend(successMsg);
-      lucide.createIcons();
-    });
-    
-    // Verificar hash na URL ao carregar
-    window.addEventListener('DOMContentLoaded', function() {
-      const initialTab = window.location.hash.substring(1) || 'inicio';
-      showTab(initialTab);
-      
-      // Adicionar botões de contato nos cards
-      document.querySelectorAll('.highlight-card').forEach(card => {
-        const contactBtn = document.createElement('button');
-        contactBtn.className = 'mt-4 bg-blue-500 hover:bg-blue-600 text-white text-sm py-2 px-4 rounded-lg transition flex items-center justify-center w-full';
-        contactBtn.innerHTML = `
-          <i data-lucide="phone" class="w-4 h-4 mr-2"></i>
-          Contatar
-        `;
-        contactBtn.addEventListener('click', function() {
-          const phone = card.querySelector('p:last-child').textContent.replace('Contato: ', '');
-          alert(`Ligando para: ${phone}\nEsta é uma demonstração. Em um sistema real, abriria o WhatsApp.`);
-        });
-        
-        card.querySelector('.space-y-2').appendChild(contactBtn);
-      });
-      
-      // Atualizar ícones
-      lucide.createIcons();
-    });
-  </script>
+<!-- Carrossel de Dados Reais -->
+<section class="carousel-section">
+<div class="container">
+<div class="carousel-container">
+<div class="carousel-slide active">
+<p class="carousel-text" data-key="carousel-text-1">33,1 milhões de brasileiros passam fome todos os dias</p>
+</div>
+<div class="carousel-slide">
+<p class="carousel-text" data-key="carousel-text-2">125,2 milhões vivem com algum grau de insegurança alimentar</p>
+</div>
+<div class="carousel-slide">
+<p class="carousel-text" data-key="carousel-text-3">9% das crianças menores de 5 anos sofrem com desnutrição</p>
+</div>
+</div>
+<div class="carousel-indicators">
+<span class="indicator active"></span>
+<span class="indicator"></span>
+<span class="indicator"></span>
+</div>
+</div>
+</section>
+
+<!-- Seção de Destaque -->
+<section class="highlight-section">
+<div class="container">
+<h2 data-key="highlight-title">Como o FomeZeroBrasil Transforma Realidades</h2>
+<div class="highlight-cards">
+<div class="highlight-card fade-in">
+<div class="highlight-icon">🏢</div>
+<h3 data-key="highlight-card-1-title">Empresas Parceiras</h3>
+<p data-key="highlight-card-1-text">Mais de 50 grandes empresas já se juntaram à nossa causa, investindo em projetos de impacto comprovado.</p>
+</div>
+<div class="highlight-card fade-in">
+<div class="highlight-icon">🔗</div>
+<h3 data-key="highlight-card-2-title">Conexão Estratégica</h3>
+<p data-key="highlight-card-2-text">Conectamos recursos corporativos com 120+ ONGs verificadas em todo o território nacional.</p>
+</div>
+<div class="highlight-card fade-in">
+<div class="highlight-icon">📈</div>
+<h3 data-key="highlight-card-3-title">Impacto Real</h3>
+<p data-key="highlight-card-3-text">Já distribuímos 2,5 milhões de refeições e beneficiamos 500.000+ pessoas em situação de vulnerabilidade.</p>
+</div>
+</div>
+</div>
+</section>
+</div>
+
+<!-- PÁGINA QUEM SOMOS -->
+<div id="quem-somos" class="page">
+<section class="content-page">
+<div class="container">
+<h1 class="page-title" data-key="about-title">Quem Somos</h1>
+<div class="page-content">
+<div class="highlight-cards">
+<div class="highlight-card">
+<div class="highlight-icon">🎯</div>
+<h2 data-key="about-mission">Nossa Missão</h2>
+<p data-key="about-mission-text">O FomeZeroBrasil tem como missão conectar grandes empresas com ONGs que trabalham para combater a fome e promover segurança alimentar no Brasil. Acreditamos que juntos podemos fazer a diferença na vida de milhões de pessoas.</p>
+</div>
+
+<div class="highlight-card">
+<div class="highlight-icon">📈</div>
+<h2 data-key="about-numbers">Nossos Números</h2>
+<p><strong data-key="about-ngos">+120 ONGs parceiras</strong> em todos os estados brasileiros<br>
+<strong data-key="about-donations">R$ 15 milhões</strong> em doações canalizadas<br>
+<strong data-key="about-people">500.000+ pessoas</strong> impactadas diretamente<br>
+<strong data-key="about-transparency">94% de transparência</strong> em todos os projetos</p>
+</div>
+</div>
+
+<div class="values-container" style="margin-top: 4rem;">
+<h2 data-key="about-values" style="text-align: center; margin-bottom: 3rem;">Nossos Valores</h2>
+<div class="highlight-cards">
+<div class="highlight-card">
+<h3 style="color: var(--primary-color);" data-key="value-1-title">Impacto Social</h3>
+<p data-key="value-1-text">Nosso foco é gerar transformação real na vida das pessoas, combatendo a fome e promovendo dignidade através de ações concretas e mensuráveis.</p>
+</div>
+<div class="highlight-card">
+<h3 style="color: var(--primary-color);" data-key="value-2-title">Transparência</h3>
+<p data-key="value-2-text">Garantimos que cada doação seja rastreada e que os doadores saibam exatamente onde seu dinheiro está sendo aplicado, com relatórios detalhados.</p>
+</div>
+<div class="highlight-card">
+<h3 style="color: var(--primary-color);" data-key="value-3-title">Cooperação</h3>
+<p data-key="value-3-text">Acreditamos no poder da colaboração entre setores para resolver problemas complexos como a fome, unindo empresas, ONGs e sociedade.</p>
+</div>
+<div class="highlight-card">
+<h3 style="color: var(--primary-color);" data-key="value-4-title">Inovação</h3>
+<p data-key="value-4-text">Utilizamos tecnologia e métodos inovadores para conectar doadores e ONGs de forma eficiente, escalável e com máximo impacto.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+
+<!-- PÁGINA ONGS -->
+<div id="ongs" class="page">
+<section class="content-page">
+<div class="container">
+<h1 class="page-title" data-key="ngos-title">ONGs Parceiras</h1>
+<p class="page-subtitle" style="text-align: center; margin-bottom: 3rem;" data-key="ngos-subtitle">Conheça as organizações que fazem a diferença</p>
+
+<div class="ong-cards">
+<!-- ONG 1 -->
+<div class="ong-card" data-region="norte-nordeste" data-action="distribuicao educacao">
+<div class="ong-card-header">
+<h3 data-key="ong-1-name">Ação Alimentar</h3>
+</div>
+<div class="ong-card-body">
+<p><strong data-key="ong-region">Região:</strong> <span data-key="ong-1-region">Norte e Nordeste</span></p>
+<p><strong data-key="ong-description">Descrição:</strong> <span data-key="ong-1-description">Distribuição de cestas básicas e educação alimentar em comunidades carentes das regiões Norte e Nordeste do Brasil.</span></p>
+<p><strong data-key="ong-action">Tipo de Ação:</strong> <span data-key="ong-1-action">Distribuição de alimentos, Educação nutricional</span></p>
+<p><strong data-key="ong-impact">Pessoas Impactadas:</strong> <span data-key="ong-1-impact">25.000 mensalmente</span></p>
+<p><strong data-key="ong-investment">Investimento Necessário:</strong> <span data-key="ong-1-investment">R$ 500.000/ano</span></p>
+</div>
+<div class="ong-card-footer">
+<button class="ong-button" data-ong="acao-alimentar" data-key="ong-details">Saiba mais</button>
+</div>
+</div>
+
+<!-- ONG 2 -->
+<div class="ong-card" data-region="sudeste" data-action="merenda educacao">
+<div class="ong-card-header">
+<h3 data-key="ong-2-name">Futuro sem Fome</h3>
+</div>
+<div class="ong-card-body">
+<p><strong data-key="ong-region">Região:</strong> <span data-key="ong-2-region">Sudeste</span></p>
+<p><strong data-key="ong-description">Descrição:</strong> <span data-key="ong-2-description">Oferecendo refeições nutritivas para crianças em situação de vulnerabilidade em escolas e creches comunitárias.</span></p>
+<p><strong data-key="ong-action">Tipo de Ação:</strong> <span data-key="ong-2-action">Merenda escolar, Educação nutricional</span></p>
+<p><strong data-key="ong-impact">Pessoas Impactadas:</strong> <span data-key="ong-2-impact">15.000 crianças por mês</span></p>
+<p><strong data-key="ong-investment">Investimento Necessário:</strong> <span data-key="ong-2-investment">R$ 300.000/ano</span></p>
+</div>
+<div class="ong-card-footer">
+<button class="ong-button" data-ong="futuro-sem-fome" data-key="ong-details">Saiba mais</button>
+</div>
+</div>
+
+<!-- ONG 3 -->
+<div class="ong-card" data-region="centro-oeste" data-action="agricultura">
+<div class="ong-card-header">
+<h3 data-key="ong-3-name">Terra Nutrida</h3>
+</div>
+<div class="ong-card-body">
+<p><strong data-key="ong-region">Região:</strong> <span data-key="ong-3-region">Centro-Oeste</span></p>
+<p><strong data-key="ong-description">Descrição:</strong> <span data-key="ong-3-description">Promovendo agricultura familiar sustentável, capacitando pequenos produtores e conectando-os a mercados locais.</span></p>
+<p><strong data-key="ong-action">Tipo de Ação:</strong> <span data-key="ong-3-action">Agricultura familiar, Capacitação</span></p>
+<p><strong data-key="ong-impact">Pessoas Impactadas:</strong> <span data-key="ong-3-impact">5.000 famílias agricultoras</span></p>
+<p><strong data-key="ong-investment">Investimento Necessário:</strong> <span data-key="ong-3-investment">R$ 200.000/ano</span></p>
+</div>
+<div class="ong-card-footer">
+<button class="ong-button" data-ong="terra-nutrida" data-key="ong-details">Saiba mais</button>
+</div>
+</div>
+
+<!-- ONG 4 -->
+<div class="ong-card" data-region="sul" data-action="reducao distribuicao">
+<div class="ong-card-header">
+<h3 data-key="ong-4-name">Alimentação Solidária</h3>
+</div>
+<div class="ong-card-body">
+<p><strong data-key="ong-region">Região:</strong> <span data-key="ong-4-region">Sul</span></p>
+<p><strong data-key="ong-description">Descrição:</strong> <span data-key="ong-4-description">Coleta de excedentes alimentares de restaurantes e supermercados, redistribuindo para pessoas em situação de rua.</span></p>
+<p><strong data-key="ong-action">Tipo de Ação:</strong> <span data-key="ong-4-action">Redução de desperdício, Distribuição de alimentos</span></p>
+<p><strong data-key="ong-impact">Pessoas Impactadas:</strong> <span data-key="ong-4-impact">10.000 refeições semanais</span></p>
+<p><strong data-key="ong-investment">Investimento Necessário:</strong> <span data-key="ong-4-investment">R$ 150.000/ano</span></p>
+</div>
+<div class="ong-card-footer">
+<button class="ong-button" data-ong="alimentacao-solidaria" data-key="ong-details">Saiba mais</button>
+</div>
+</div>
+
+<!-- ONG 5 -->
+<div class="ong-card" data-region="nordeste" data-action="cozinha distribuicao">
+<div class="ong-card-header">
+<h3 data-key="ong-5-name">Cozinha Comunitária</h3>
+</div>
+<div class="ong-card-body">
+<p><strong data-key="ong-region">Região:</strong> <span data-key="ong-5-region">Nordeste</span></p>
+<p><strong data-key="ong-description">Descrição:</strong> <span data-key="ong-5-description">Cozinhas comunitárias que preparam refeições nutritivas para famílias em situação de vulnerabilidade alimentar.</span></p>
+<p><strong data-key="ong-action">Tipo de Ação:</strong> <span data-key="ong-5-action">Cozinhas comunitárias, Distribuição de alimentos</span></p>
+<p><strong data-key="ong-impact">Pessoas Impactadas:</strong> <span data-key="ong-5-impact">8.000 refeições diárias</span></p>
+<p><strong data-key="ong-investment">Investimento Necessário:</strong> <span data-key="ong-5-investment">R$ 400.000/ano</span></p>
+</div>
+<div class="ong-card-footer">
+<button class="ong-button" data-ong="cozinha-comunitaria" data-key="ong-details">Saiba mais</button>
+</div>
+</div>
+
+<!-- ONG 6 -->
+<div class="ong-card" data-region="nacional" data-action="educacao capacitacao">
+<div class="ong-card-header">
+<h3 data-key="ong-6-name">Educação Alimentar</h3>
+</div>
+<div class="ong-card-body">
+<p><strong data-key="ong-region">Região:</strong> <span data-key="ong-6-region">Nacional</span></p>
+<p><strong data-key="ong-description">Descrição:</strong> <span data-key="ong-6-description">Programas de educação nutricional e capacitação em segurança alimentar para comunidades em todo o Brasil.</span></p>
+<p><strong data-key="ong-action">Tipo de Ação:</strong> <span data-key="ong-6-action">Educação nutricional, Capacitação</span></p>
+<p><strong data-key="ong-impact">Pessoas Impactadas:</strong> <span data-key="ong-6-impact">50.000 pessoas capacitadas</span></p>
+<p><strong data-key="ong-investment">Investimento Necessário:</strong> <span data-key="ong-6-investment">R$ 600.000/ano</span></p>
+</div>
+<div class="ong-card-footer">
+<button class="ong-button" data-ong="educacao-alimentar" data-key="ong-details">Saiba mais</button>
+</div>
+</div>
+
+<!-- ONG 7 -->
+<div class="ong-card" data-region="norte" data-action="agricultura sustentabilidade">
+<div class="ong-card-header">
+<h3 data-key="ong-7-name">Amazônia Sustentável</h3>
+</div>
+<div class="ong-card-body">
+<p><strong data-key="ong-region">Região:</strong> <span data-key="ong-7-region">Norte</span></p>
+<p><strong data-key="ong-description">Descrição:</strong> <span data-key="ong-7-description">Projetos de agricultura sustentável na Amazônia, promovendo segurança alimentar e conservação ambiental.</span></p>
+<p><strong data-key="ong-action">Tipo de Ação:</strong> <span data-key="ong-7-action">Agricultura sustentável, Conservação</span></p>
+<p><strong data-key="ong-impact">Pessoas Impactadas:</strong> <span data-key="ong-7-impact">3.000 famílias ribeirinhas</span></p>
+<p><strong data-key="ong-investment">Investimento Necessário:</strong> <span data-key="ong-7-investment">R$ 350.000/ano</span></p>
+</div>
+<div class="ong-card-footer">
+<button class="ong-button" data-ong="amazonia-sustentavel" data-key="ong-details">Saiba mais</button>
+</div>
+</div>
+
+<!-- ONG 8 -->
+<div class="ong-card" data-region="sudeste" data-action="reducao distribuicao">
+<div class="ong-card-header">
+<h3 data-key="ong-8-name">Banco de Alimentos</h3>
+</div>
+<div class="ong-card-body">
+<p><strong data-key="ong-region">Região:</strong> <span data-key="ong-8-region">Sudeste</span></p>
+<p><strong data-key="ong-description">Descrição:</strong> <span data-key="ong-8-description">Coleta e redistribuição de alimentos que seriam desperdiçados para instituições carentes da região metropolitana.</span></p>
+<p><strong data-key="ong-action">Tipo de Ação:</strong> <span data-key="ong-8-action">Redução de desperdício, Distribuição</span></p>
+<p><strong data-key="ong-impact">Pessoas Impactadas:</strong> <span data-key="ong-8-impact">20.000 pessoas mensalmente</span></p>
+<p><strong data-key="ong-investment">Investimento Necessário:</strong> <span data-key="ong-8-investment">R$ 250.000/ano</span></p>
+</div>
+<div class="ong-card-footer">
+<button class="ong-button" data-ong="banco-alimentos" data-key="ong-details">Saiba mais</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+
+<!-- PÁGINA DOADORES -->
+<div id="doadores" class="page">
+<section class="content-page">
+<div class="container">
+<h1 class="page-title" data-key="donors-title">Para Doadores</h1>
+<p class="page-subtitle" style="text-align: center; margin-bottom: 3rem;" data-key="donors-subtitle">Sua empresa pode transformar vidas</p>
+
+<!-- Sistema de Filtros -->
+<div class="filters-container">
+<h3 style="margin-bottom: 1.5rem; color: var(--secondary-color); font-family: 'Poppins', sans-serif;" data-key="filter-title">Encontre a ONG Ideal</h3>
+<div class="filters-grid">
+<div class="filter-group">
+<label class="filter-label" data-key="filter-region">Região de Atuação</label>
+<select class="filter-select" id="filter-region">
+<option value="" data-key="filter-all-regions">Todas as regiões</option>
+<option value="norte" data-key="filter-north">Norte</option>
+<option value="nordeste" data-key="filter-northeast">Nordeste</option>
+<option value="centro-oeste" data-key="filter-midwest">Centro-Oeste</option>
+<option value="sudeste" data-key="filter-southeast">Sudeste</option>
+<option value="sul" data-key="filter-south">Sul</option>
+<option value="nacional" data-key="filter-national">Nacional</option>
+</select>
+</div>
+<div class="filter-group">
+<label class="filter-label" data-key="filter-action">Tipo de Ação</label>
+<select class="filter-select" id="filter-action">
+<option value="" data-key="filter-all-actions">Todos os tipos</option>
+<option value="distribuicao" data-key="filter-distribution">Distribuição de alimentos</option>
+<option value="agricultura" data-key="filter-agriculture">Agricultura familiar</option>
+<option value="educacao" data-key="filter-education">Educação nutricional</option>
+<option value="reducao" data-key="filter-reduction">Redução de desperdício</option>
+<option value="merenda" data-key="filter-school">Merenda escolar</option>
+<option value="cozinha" data-key="filter-kitchen">Cozinhas comunitárias</option>
+</select>
+</div>
+<div class="filter-group">
+<label class="filter-label" data-key="filter-sort">Ordenar por</label>
+<select class="filter-select" id="filter-sort">
+<option value="nome" data-key="sort-name">Nome A-Z</option>
+<option value="impacto" data-key="sort-impact">Maior impacto</option>
+<option value="investimento" data-key="sort-investment">Menor investimento</option>
+</select>
+</div>
+</div>
+<button class="filter-reset" id="reset-filters" data-key="filter-reset">Limpar Filtros</button>
+</div>
+
+<!-- Painel de Transparência -->
+<div class="transparency-panel">
+<h3 style="margin-bottom: 1rem; color: var(--secondary-color); font-family: 'Poppins', sans-serif;" data-key="transparency-title">Acompanhamento em Tempo Real</h3>
+<p style="margin-bottom: 1.5rem; color: var(--gray-color);" data-key="transparency-subtitle">Veja como seu investimento está sendo aplicado e o impacto gerado</p>
+<div class="transparency-grid">
+<div class="transparency-item">
+<div style="font-size: 2rem; color: var(--primary-color); margin-bottom: 0.5rem;">📊</div>
+<h4 data-key="transparency-1-title">Relatórios Mensais</h4>
+<p data-key="transparency-1-text">Detalhamento completo da aplicação dos recursos</p>
+</div>
+<div class="transparency-item">
+<div style="font-size: 2rem; color: var(--primary-color); margin-bottom: 0.5rem;">📸</div>
+<h4 data-key="transparency-2-title">Fotos e Vídeos</h4>
+<p data-key="transparency-2-text">Registro visual das ações realizadas</p>
+</div>
+<div class="transparency-item">
+<div style="font-size: 2rem; color: var(--primary-color); margin-bottom: 0.5rem;">🎯</div>
+<h4 data-key="transparency-3-title">Métricas de Impacto</h4>
+<p data-key="transparency-3-text">Indicadores de pessoas beneficiadas</p>
+</div>
+<div class="transparency-item">
+<div style="font-size: 2rem; color: var(--primary-color); margin-bottom: 0.5rem;">💬</div>
+<h4 data-key="transparency-4-title">Contato Direto</h4>
+<p data-key="transparency-4-text">Comunicação com a ONG parceira</p>
+</div>
+</div>
+</div>
+
+<div class="page-content">
+<div class="highlight-cards" style="margin-bottom: 4rem;">
+<div class="highlight-card">
+<div class="highlight-icon">📊</div>
+<h3 data-key="donors-benefit-1">Transparência Total</h3>
+<p data-key="donors-benefit-1-text">Relatórios detalhados com fotos, vídeos e métricas mostram exatamente onde cada real foi aplicado e o impacto gerado.</p>
+</div>
+<div class="highlight-card">
+<div class="highlight-icon">📈</div>
+<h3 data-key="donors-benefit-2">Impacto Mensurável</h3>
+<p data-key="donors-benefit-2-text">Acompanhe indicadores concretos: refeições servidas, famílias atendidas, comunidades transformadas.</p>
+</div>
+<div class="highlight-card">
+<div class="highlight-icon">🏆</div>
+<h3 data-key="donors-benefit-3">Reconhecimento</h3>
+<p data-key="donors-benefit-3-text">Certificado de Empresa Socialmente Responsável e visibilidade em nossas plataformas e mídias.</p>
+</div>
+</div>
+
+<div class="form-container">
+<h2 data-key="donors-form-title" style="text-align: center; margin-bottom: 2rem;">Quero ser Doador</h2>
+<form id="donor-form" action="https://formspree.io/f/xzzjgPjy" method="POST">
+<input type="hidden" name="_subject" value="Novo cadastro de doador - FomeZeroBrasil">
+<input type="hidden" name="_language" value="pt">
+
+<div class="form-group">
+<label for="name" class="form-label" data-key="form-name">Nome Completo</label>
+<input type="text" id="name" name="name" class="form-input" required placeholder="Seu nome completo">
+</div>
+<div class="form-group">
+<label for="email" class="form-label" data-key="form-email">E-mail Corporativo</label>
+<input type="email" id="email" name="email" class="form-input" required placeholder="seu.email@empresa.com">
+</div>
+<div class="form-group">
+<label for="phone" class="form-label" data-key="form-phone">Telefone</label>
+<input type="tel" id="phone" name="phone" class="form-input" required placeholder="(11) 99999-9999">
+</div>
+<div class="form-group">
+<label for="company" class="form-label" data-key="form-company">Nome da Empresa</label>
+<input type="text" id="company" name="company" class="form-input" required placeholder="Nome da sua empresa">
+</div>
+<div class="form-group">
+<label for="value" class="form-label" data-key="form-value">Valor da Doação</label>
+<select id="value" name="value" class="form-select" required>
+<option value="" data-key="form-select-value">Selecione um valor</option>
+<option value="1000">R$ 1.000,00</option>
+<option value="5000">R$ 5.000,00</option>
+<option value="10000">R$ 10.000,00</option>
+<option value="25000">R$ 25.000,00</option>
+<option value="50000">R$ 50.000,00</option>
+<option value="custom" data-key="form-custom-value">Valor personalizado</option>
+</select>
+</div>
+<div class="form-group">
+<label for="message" class="form-label" data-key="form-message">Mensagem (Opcional)</label>
+<textarea id="message" name="message" class="form-textarea" placeholder="Alguma observação ou interesse específico..." data-key="form-message-placeholder"></textarea>
+</div>
+<div id="donor-feedback" class="form-feedback"></div>
+<button type="submit" class="submit-button" data-key="form-submit">
+<span data-key="form-submit-text">Enviar Proposta</span>
+</button>
+</form>
+</div>
+</div>
+</div>
+</section>
+</div>
+
+<!-- PÁGINA COMO DOAR -->
+<div id="como-doar" class="page">
+<section class="content-page">
+<div class="container">
+<h1 class="page-title" data-key="how-to-donate-title">Como Fazer sua Doação</h1>
+<p class="page-subtitle" style="text-align: center; margin-bottom: 3rem;" data-key="how-to-donate-subtitle">Em apenas 4 passos simples</p>
+
+<div class="steps-container">
+<div class="step">
+<div class="step-icon">🔍</div>
+<div class="step-number">1</div>
+<h3 data-key="step-1-title">Escolha uma ONG</h3>
+<p data-key="step-1-text">Navegue pela nossa lista de ONGs verificadas e escolha uma que se alinhe com os valores da sua empresa.</p>
+</div>
+<div class="step">
+<div class="step-icon">📋</div>
+<div class="step-number">2</div>
+<h3 data-key="step-2-title">Selecione um Projeto</h3>
+<p data-key="step-2-text">Cada ONG tem projetos específicos que você pode apoiar. Escolha aquele que mais se conecta com sua empresa.</p>
+</div>
+<div class="step">
+<div class="step-icon">💰</div>
+<div class="step-number">3</div>
+<h3 data-key="step-3-title">Escolha o Valor</h3>
+<p data-key="step-3-text">Defina o valor da sua doação. Qualquer quantia faz diferença! Oferecemos opções flexíveis de pagamento.</p>
+</div>
+<div class="step">
+<div class="step-icon">✅</div>
+<div class="step-number">4</div>
+<h3 data-key="step-4-title">Finalize a Doação</h3>
+<p data-key="step-4-text">Preencha os dados necessários e confirme sua doação. Você receberá um comprovante e relatórios periódicos.</p>
+</div>
+</div>
+
+<div style="text-align: center; margin-top: 4rem;">
+<a href="#ongs" class="cta-button page-link" data-page="ongs" data-key="donate-now">
+<span data-key="start-donation">Começar Doação</span>
+</a>
+</div>
+</div>
+</section>
+</div>
+
+<!-- PÁGINA CADASTRE-SE -->
+<div id="cadastre-se" class="page">
+<section class="content-page">
+<div class="container">
+<h1 class="page-title" data-key="register-title">Cadastre sua ONG</h1>
+<p class="page-subtitle" style="text-align: center; margin-bottom: 3rem;" data-key="register-subtitle">Junte-se à nossa rede de organizações que combatem a fome</p>
+
+<div class="form-container">
+<form id="ong-form" action="https://formspree.io/f/xzzjgPjy" method="POST">
+<input type="hidden" name="_subject" value="Novo cadastro de ONG - FomeZeroBrasil">
+<input type="hidden" name="_language" value="pt">
+
+<div class="form-group">
+<label for="ong-name" class="form-label" data-key="form-name">Nome da ONG</label>
+<input type="text" id="ong-name" name="ong-name" class="form-input" required placeholder="Nome completo da organização">
+</div>
+<div class="form-group">
+<label for="ong-region" class="form-label" data-key="form-region">Região de Atuação</label>
+<select id="ong-region" name="ong-region" class="form-select" required>
+<option value="" data-key="form-select-region">Selecione uma região</option>
+<option value="norte" data-key="form-north">Norte</option>
+<option value="nordeste" data-key="form-northeast">Nordeste</option>
+<option value="centro-oeste" data-key="form-midwest">Centro-Oeste</option>
+<option value="sudeste" data-key="form-southeast">Sudeste</option>
+<option value="sul" data-key="form-south">Sul</option>
+<option value="nacional" data-key="form-national">Nacional</option>
+</select>
+</div>
+<div class="form-group">
+<label for="ong-email" class="form-label" data-key="form-email">E-mail</label>
+<input type="email" id="ong-email" name="ong-email" class="form-input" required placeholder="contato@ong.org">
+</div>
+<div class="form-group">
+<label for="ong-phone" class="form-label" data-key="form-phone">Telefone</label>
+<input type="tel" id="ong-phone" name="ong-phone" class="form-input" required placeholder="(11) 99999-9999">
+</div>
+<div class="form-group">
+<label for="ong-description" class="form-label" data-key="form-description">Descrição da ONG</label>
+<textarea id="ong-description" name="ong-description" class="form-textarea" required placeholder="Descreva o trabalho da sua organização, missão, projetos..." data-key="form-description-placeholder"></textarea>
+</div>
+<div class="form-group">
+<label for="ong-people" class="form-label" data-key="form-people-served">Pessoas Atendidas</label>
+<input type="number" id="ong-people" name="ong-people" class="form-input" required placeholder="Número aproximado de pessoas beneficiadas">
+</div>
+<div class="form-group">
+<label for="ong-actions" class="form-label" data-key="form-actions">Tipos de Ação</label>
+<select id="ong-actions" name="ong-actions" class="form-select" multiple>
+<option value="distribuicao" data-key="form-action-distribution">Distribuição de alimentos</option>
+<option value="agricultura" data-key="form-action-agriculture">Agricultura familiar</option>
+<option value="educacao" data-key="form-action-education">Educação nutricional</option>
+<option value="reducao" data-key="form-action-reduction">Redução de desperdício</option>
+<option value="merenda" data-key="form-action-school">Merenda escolar</option>
+<option value="cozinha" data-key="form-action-kitchen">Cozinhas comunitárias</option>
+</select>
+</div>
+<div id="ong-feedback" class="form-feedback"></div>
+<button type="submit" class="submit-button" data-key="form-submit">
+<span data-key="form-submit-text">Enviar Cadastro</span>
+</button>
+</form>
+</div>
+</div>
+</section>
+</div>
+
+<!-- PÁGINA MAPA DA FOME -->
+<div id="mapa-fome" class="page">
+<section class="content-page">
+<div class="container">
+<h1 class="page-title" data-key="hunger-map-title">Mapa da Fome no Brasil</h1>
+<p class="page-subtitle" style="text-align: center; margin-bottom: 3rem;" data-key="hunger-map-subtitle">Visualize os dados de insegurança alimentar por estado</p>
+
+<div id="map-container">
+<div id="map"></div>
+<div id="legend">
+<h4 data-key="legend-title">Insegurança Alimentar Grave (%)</h4>
+<div class="legend-item">
+<div class="legend-color" style="background-color: #ffffcc"></div>
+<span data-key="legend-1">0% - 5%</span>
+</div>
+<div class="legend-item">
+<div class="legend-color" style="background-color: #ffeda0"></div>
+<span data-key="legend-2">5% - 10%</span>
+</div>
+<div class="legend-item">
+<div class="legend-color" style="background-color: #fed976"></div>
+<span data-key="legend-3">10% - 15%</span>
+</div>
+<div class="legend-item">
+<div class="legend-color" style="background-color: #feb24c"></div>
+<span data-key="legend-4">15% - 20%</span>
+</div>
+<div class="legend-item">
+<div class="legend-color" style="background-color: #fd8d3c"></div>
+<span data-key="legend-5">20% - 25%</span>
+</div>
+<div class="legend-item">
+<div class="legend-color" style="background-color: #fc4e2a"></div>
+<span data-key="legend-6">25% - 30%</span>
+</div>
+<div class="legend-item">
+<div class="legend-color" style="background-color: #e31a1c"></div>
+<span data-key="legend-7">30% - 35%</span>
+</div>
+<div class="legend-item">
+<div class="legend-color" style="background-color: #bd0026"></div>
+<span data-key="legend-8">35% - 40%</span>
+</div>
+<div class="legend-item">
+<div class="legend-color" style="background-color: #800026"></div>
+<span data-key="legend-9">40%+</span>
+</div>
+</div>
+</div>
+
+<!-- Dados Estatísticos Organizados -->
+<div class="stats-grid">
+<div class="stat-card">
+<div class="stat-number">15.5%</div>
+<div class="stat-label" data-key="stat-national-average">Média Nacional</div>
+</div>
+<div class="stat-card">
+<div class="stat-number">33.1M</div>
+<div class="stat-label" data-key="stat-people-affected">Pessoas em IA Grave</div>
+</div>
+<div class="stat-card">
+<div class="stat-number">38.2%</div>
+<div class="stat-label" data-key="stat-highest-rate">Maior Índice (MA)</div>
+</div>
+<div class="stat-card">
+<div class="stat-number">10.8%</div>
+<div class="stat-label" data-key="stat-lowest-rate">Menor Índice (SC)</div>
+</div>
+</div>
+
+<div class="map-info" style="margin-top: 2rem;">
+<div class="highlight-card">
+<h3 data-key="stats-title">Análise Estatística da Fome no Brasil</h3>
+<p><strong data-key="stats-source">Fonte:</strong> 2º Inquérito Nacional de Insegurança Alimentar - Rede PENSSAN 2022</p>
+
+<div style="margin: 2rem 0;">
+<h4 style="color: var(--primary-color); margin-bottom: 1rem;" data-key="regional-analysis">Análise Regional</h4>
+<table class="comparison-table">
+<thead>
+<tr>
+<th data-key="table-region">Região</th>
+<th data-key="table-rate">Taxa IA Grave</th>
+<th data-key="table-comparison">Comparação com Média</th>
+<th data-key="table-population">População Afetada</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong data-key="region-northeast">Nordeste</strong></td>
+<td>28.3%</td>
+<td class="region-high" data-key="comparison-high">+82.6% acima</td>
+<td>16.2 milhões</td>
+</tr>
+<tr>
+<td><strong data-key="region-north">Norte</strong></td>
+<td>25.1%</td>
+<td class="region-high" data-key="comparison-high">+61.9% acima</td>
+<td>4.8 milhões</td>
+</tr>
+<tr>
+<td><strong data-key="region-midwest">Centro-Oeste</strong></td>
+<td>14.9%</td>
+<td data-key="comparison-below">-3.9% abaixo</td>
+<td>2.4 milhões</td>
+</tr>
+<tr>
+<td><strong data-key="region-southeast">Sudeste</strong></td>
+<td>12.8%</td>
+<td class="region-low" data-key="comparison-low">-17.4% abaixo</td>
+<td>5.8 milhões</td>
+</tr>
+<tr>
+<td><strong data-key="region-south">Sul</strong></td>
+<td>11.5%</td>
+<td class="region-low" data-key="comparison-low">-25.8% abaixo</td>
+<td>3.9 milhões</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<div style="margin: 2rem 0;">
+<h4 style="color: var(--primary-color); margin-bottom: 1rem;" data-key="key-insights">Principais Insights</h4>
+<ul style="color: var(--gray-color); line-height: 1.8; padding-left: 1.5rem;">
+<li data-key="insight-1"><strong>Desigualdade Regional:</strong> Nordeste e Norte concentram 63% da população em insegurança alimentar grave</li>
+<li data-key="insight-2"><strong>Variação Estadual:</strong> Diferença de 27.4 pontos percentuais entre o maior e menor índice</li>
+<li data-key="insight-3"><strong>Impacto Demográfico:</strong> 15.5% da população brasileira vive em situação de fome</li>
+<li data-key="insight-4"><strong>Urgência:</strong> 33.1 milhões de brasileiros precisam de assistência alimentar imediata</li>
+</ul>
+</div>
+
+<div style="background: var(--light-color); padding: 1.5rem; border-radius: var(--border-radius); margin-top: 1.5rem;">
+<h5 style="color: var(--primary-color); margin-bottom: 1rem;" data-key="methodology-title">Metodologia</h5>
+<p style="color: var(--gray-color); font-size: 0.9rem; line-height: 1.6;" data-key="methodology-text">
+Os dados representam a insegurança alimentar grave, situação em que as pessoas passam fome por falta de recursos para comprar alimentos.
+A pesquisa foi realizada em 12.745 domicílios brasileiros entre novembro de 2021 e abril de 2022.
+</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+
+<!-- Modal para detalhes da ONG -->
+<div class="modal" id="ong-modal">
+<div class="modal-content">
+<button class="modal-close" data-key="modal-close">&times;</button>
+<h2 id="modal-title" data-key="ong-details">Detalhes da ONG</h2>
+<div class="modal-body">
+<p><strong data-key="ong-region">Região de Atuação:</strong> <span id="modal-region"></span></p>
+<p><strong data-key="ong-description">Descrição:</strong> <span id="modal-description"></span></p>
+<p><strong data-key="ong-action">Tipo de Ação:</strong> <span id="modal-actions"></span></p>
+<p><strong data-key="ong-impact">Pessoas Impactadas:</strong> <span id="modal-impact"></span></p>
+<p><strong data-key="ong-investment">Investimento Necessário:</strong> <span id="modal-investment"></span></p>
+</div>
+</div>
+</div>
+
+<!-- Rodapé -->
+<footer class="footer">
+<div class="container">
+<div class="footer-content">
+<div class="footer-logo">
+<h2 data-key="site-name">FomeZeroBrasil</h2>
+<p data-key="footer-slogan">Unindo empresas contra a fome</p>
+<p style="margin-top: 1rem; opacity: 0.8;" data-key="footer-description">Transformando vidas através da conexão entre empresas e organizações sociais.</p>
+</div>
+<div class="footer-links">
+<h3 data-key="quick-links">Links Rápidos</h3>
+<ul>
+<li><a href="#home" class="page-link" data-page="home" data-key="home">Home</a></li>
+<li><a href="#quem-somos" class="page-link" data-page="quem-somos" data-key="about">Quem Somos</a></li>
+<li><a href="#ongs" class="page-link" data-page="ongs" data-key="ngos">ONGs</a></li>
+<li><a href="#doadores" class="page-link" data-page="doadores" data-key="donors">Doadores</a></li>
+<li><a href="#como-doar" class="page-link" data-page="como-doar" data-key="how-to-donate">Como Doar</a></li>
+<li><a href="#cadastre-se" class="page-link" data-page="cadastre-se" data-key="register">Cadastre-se</a></li>
+<li><a href="#mapa-fome" class="page-link" data-page="mapa-fome" data-key="hunger-map">Mapa da Fome</a></li>
+</ul>
+</div>
+<div class="footer-contact">
+<h3 data-key="contact">Contato</h3>
+<p>contato@fomezerobrasil.org</p>
+<p>+55 (11) 99999-9999</p>
+<p data-key="footer-location">São Paulo - SP, Brasil</p>
+<div class="social-icons">
+<a href="#" aria-label="Facebook" title="Facebook">FB</a>
+<a href="#" aria-label="Instagram" title="Instagram">IG</a>
+<a href="#" aria-label="Twitter" title="Twitter">TW</a>
+<a href="#" aria-label="LinkedIn" title="LinkedIn">IN</a>
+</div>
+</div>
+</div>
+<div class="footer-bottom">
+<p>&copy; 2025 FomeZeroBrasil. <span data-key="rights">Todos os direitos reservados</span>. | <span data-key="footer-message">Feito com dedicação para um Brasil sem fome</span></p>
+</div>
+</div>
+</footer>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+// === SISTEMA DE TRADUÇÃO COMPLETO ===
+const translations = {
+pt: {
+// Menu e Navegação
+"site-name": "FomeZeroBrasil",
+"home": "Home",
+"about": "Quem Somos",
+"ngos": "ONGs",
+"donors": "Doadores",
+"how-to-donate": "Como Doar",
+"register": "Cadastre-se",
+"hunger-map": "Mapa da Fome",
+
+// Home
+"hero-title": "FomeZeroBrasil: Unindo empresas contra a fome",
+"hero-subtitle": "Conectamos grandes empresas com ONGs que combatem a insegurança alimentar",
+"donate-now": "Doe Agora",
+"carousel-text-1": "33,1 milhões de brasileiros passam fome todos os dias",
+"carousel-text-2": "125,2 milhões vivem com algum grau de insegurança alimentar",
+"carousel-text-3": "9% das crianças menores de 5 anos sofrem com desnutrição",
+"highlight-title": "Como o FomeZeroBrasil Transforma Realidades",
+"highlight-card-1-title": "Empresas Parceiras",
+"highlight-card-1-text": "Mais de 50 grandes empresas já se juntaram à nossa causa, investindo em projetos de impacto comprovado.",
+"highlight-card-2-title": "Conexão Estratégica",
+"highlight-card-2-text": "Conectamos recursos corporativos com 120+ ONGs verificadas em todo o território nacional.",
+"highlight-card-3-title": "Impacto Real",
+"highlight-card-3-text": "Já distribuímos 2,5 milhões de refeições e beneficiamos 500.000+ pessoas em situação de vulnerabilidade.",
+
+// Quem Somos
+"about-title": "Quem Somos",
+"about-mission": "Nossa Missão",
+"about-mission-text": "O FomeZeroBrasil tem como missão conectar grandes empresas com ONGs que trabalham para combater a fome e promover segurança alimentar no Brasil. Acreditamos que juntos podemos fazer a diferença na vida de milhões de pessoas.",
+"about-numbers": "Nossos Números",
+"about-ngos": "+120 ONGs parceiras",
+"about-donations": "R$ 15 milhões",
+"about-people": "500.000+ pessoas",
+"about-transparency": "94% de transparência",
+"about-values": "Nossos Valores",
+"value-1-title": "Impacto Social",
+"value-1-text": "Nosso foco é gerar transformação real na vida das pessoas, combatendo a fome e promovendo dignidade através de ações concretas e mensuráveis.",
+"value-2-title": "Transparência",
+"value-2-text": "Garantimos que cada doação seja rastreada e que os doadores saibam exatamente onde seu dinheiro está sendo aplicado, com relatórios detalhados.",
+"value-3-title": "Cooperação",
+"value-3-text": "Acreditamos no poder da colaboração entre setores para resolver problemas complexos como a fome, unindo empresas, ONGs e sociedade.",
+"value-4-title": "Inovação",
+"value-4-text": "Utilizamos tecnologia e métodos inovadores para conectar doadores e ONGs de forma eficiente, escalável e com máximo impacto.",
+
+// ONGs
+"ngos-title": "ONGs Parceiras",
+"ngos-subtitle": "Conheça as organizações que fazem a diferença",
+"ong-1-name": "Ação Alimentar",
+"ong-1-region": "Norte e Nordeste",
+"ong-1-description": "Distribuição de cestas básicas e educação alimentar em comunidades carentes das regiões Norte e Nordeste do Brasil.",
+"ong-1-action": "Distribuição de alimentos, Educação nutricional",
+"ong-1-impact": "25.000 mensalmente",
+"ong-1-investment": "R$ 500.000/ano",
+"ong-2-name": "Futuro sem Fome",
+"ong-2-region": "Sudeste",
+"ong-2-description": "Oferecendo refeições nutritivas para crianças em situação de vulnerabilidade em escolas e creches comunitárias.",
+"ong-2-action": "Merenda escolar, Educação nutricional",
+"ong-2-impact": "15.000 crianças por mês",
+"ong-2-investment": "R$ 300.000/ano",
+"ong-3-name": "Terra Nutrida",
+"ong-3-region": "Centro-Oeste",
+"ong-3-description": "Promovendo agricultura familiar sustentável, capacitando pequenos produtores e conectando-os a mercados locais.",
+"ong-3-action": "Agricultura familiar, Capacitação",
+"ong-3-impact": "5.000 famílias agricultoras",
+"ong-3-investment": "R$ 200.000/ano",
+"ong-4-name": "Alimentação Solidária",
+"ong-4-region": "Sul",
+"ong-4-description": "Coleta de excedentes alimentares de restaurantes e supermercados, redistribuindo para pessoas em situação de rua.",
+"ong-4-action": "Redução de desperdício, Distribuição de alimentos",
+"ong-4-impact": "10.000 refeições semanais",
+"ong-4-investment": "R$ 150.000/ano",
+"ong-5-name": "Cozinha Comunitária",
+"ong-5-region": "Nordeste",
+"ong-5-description": "Cozinhas comunitárias que preparam refeições nutritivas para famílias em situação de vulnerabilidade alimentar.",
+"ong-5-action": "Cozinhas comunitárias, Distribuição de alimentos",
+"ong-5-impact": "8.000 refeições diárias",
+"ong-5-investment": "R$ 400.000/ano",
+"ong-6-name": "Educação Alimentar",
+"ong-6-region": "Nacional",
+"ong-6-description": "Programas de educação nutricional e capacitação em segurança alimentar para comunidades em todo o Brasil.",
+"ong-6-action": "Educação nutricional, Capacitação",
+"ong-6-impact": "50.000 pessoas capacitadas",
+"ong-6-investment": "R$ 600.000/ano",
+"ong-7-name": "Amazônia Sustentável",
+"ong-7-region": "Norte",
+"ong-7-description": "Projetos de agricultura sustentável na Amazônia, promovendo segurança alimentar e conservação ambiental.",
+"ong-7-action": "Agricultura sustentável, Conservação",
+"ong-7-impact": "3.000 famílias ribeirinhas",
+"ong-7-investment": "R$ 350.000/ano",
+"ong-8-name": "Banco de Alimentos",
+"ong-8-region": "Sudeste",
+"ong-8-description": "Coleta e redistribuição de alimentos que seriam desperdiçados para instituições carentes da região metropolitana.",
+"ong-8-action": "Redução de desperdício, Distribuição",
+"ong-8-impact": "20.000 pessoas mensalmente",
+"ong-8-investment": "R$ 250.000/ano",
+"ong-region": "Região",
+"ong-description": "Descrição",
+"ong-action": "Tipo de Ação",
+"ong-impact": "Pessoas Impactadas",
+"ong-investment": "Investimento Necessário",
+"ong-details": "Saiba mais",
+
+// Doadores
+"donors-title": "Para Doadores",
+"donors-subtitle": "Sua empresa pode transformar vidas",
+"filter-title": "Encontre a ONG Ideal",
+"filter-region": "Região de Atuação",
+"filter-all-regions": "Todas as regiões",
+"filter-north": "Norte",
+"filter-northeast": "Nordeste",
+"filter-midwest": "Centro-Oeste",
+"filter-southeast": "Sudeste",
+"filter-south": "Sul",
+"filter-national": "Nacional",
+"filter-action": "Tipo de Ação",
+"filter-all-actions": "Todos os tipos",
+"filter-distribution": "Distribuição de alimentos",
+"filter-agriculture": "Agricultura familiar",
+"filter-education": "Educação nutricional",
+"filter-reduction": "Redução de desperdício",
+"filter-school": "Merenda escolar",
+"filter-kitchen": "Cozinhas comunitárias",
+"filter-sort": "Ordenar por",
+"sort-name": "Nome A-Z",
+"sort-impact": "Maior impacto",
+"sort-investment": "Menor investimento",
+"filter-reset": "Limpar Filtros",
+"transparency-title": "Acompanhamento em Tempo Real",
+"transparency-subtitle": "Veja como seu investimento está sendo aplicado e o impacto gerado",
+"transparency-1-title": "Relatórios Mensais",
+"transparency-1-text": "Detalhamento completo da aplicação dos recursos",
+"transparency-2-title": "Fotos e Vídeos",
+"transparency-2-text": "Registro visual das ações realizadas",
+"transparency-3-title": "Métricas de Impacto",
+"transparency-3-text": "Indicadores de pessoas beneficiadas",
+"transparency-4-title": "Contato Direto",
+"transparency-4-text": "Comunicação com a ONG parceira",
+"donors-benefit-1": "Transparência Total",
+"donors-benefit-1-text": "Relatórios detalhados com fotos, vídeos e métricas mostram exatamente onde cada real foi aplicado e o impacto gerado.",
+"donors-benefit-2": "Impacto Mensurável",
+"donors-benefit-2-text": "Acompanhe indicadores concretos: refeições servidas, famílias atendidas, comunidades transformadas.",
+"donors-benefit-3": "Reconhecimento",
+"donors-benefit-3-text": "Certificado de Empresa Socialmente Responsável e visibilidade em nossas plataformas e mídias.",
+"donors-form-title": "Quero ser Doador",
+
+// Como Doar
+"how-to-donate-title": "Como Fazer sua Doação",
+"how-to-donate-subtitle": "Em apenas 4 passos simples",
+"step-1-title": "Escolha uma ONG",
+"step-1-text": "Navegue pela nossa lista de ONGs verificadas e escolha uma que se alinhe com os valores da sua empresa.",
+"step-2-title": "Selecione um Projeto",
+"step-2-text": "Cada ONG tem projetos específicos que você pode apoiar. Escolha aquele que mais se conecta com sua empresa.",
+"step-3-title": "Escolha o Valor",
+"step-3-text": "Defina o valor da sua doação. Qualquer quantia faz diferença! Oferecemos opções flexíveis de pagamento.",
+"step-4-title": "Finalize a Doação",
+"step-4-text": "Preencha os dados necessários e confirme sua doação. Você receberá um comprovante e relatórios periódicos.",
+"start-donation": "Começar Doação",
+
+// Cadastre-se
+"register-title": "Cadastre sua ONG",
+"register-subtitle": "Junte-se à nossa rede de organizações que combatem a fome",
+
+// Mapa da Fome
+"hunger-map-title": "Mapa da Fome no Brasil",
+"hunger-map-subtitle": "Visualize os dados de insegurança alimentar por estado",
+"legend-title": "Insegurança Alimentar Grave (%)",
+"legend-1": "0% - 5%",
+"legend-2": "5% - 10%",
+"legend-3": "10% - 15%",
+"legend-4": "15% - 20%",
+"legend-5": "20% - 25%",
+"legend-6": "25% - 30%",
+"legend-7": "30% - 35%",
+"legend-8": "35% - 40%",
+"legend-9": "40%+",
+"stats-title": "Análise Estatística da Fome no Brasil",
+"stats-source": "Fonte",
+"stat-national-average": "Média Nacional",
+"stat-people-affected": "Pessoas em IA Grave",
+"stat-highest-rate": "Maior Índice (MA)",
+"stat-lowest-rate": "Menor Índice (SC)",
+"regional-analysis": "Análise Regional",
+"table-region": "Região",
+"table-rate": "Taxa IA Grave",
+"table-comparison": "Comparação com Média",
+"table-population": "População Afetada",
+"region-northeast": "Nordeste",
+"region-north": "Norte",
+"region-midwest": "Centro-Oeste",
+"region-southeast": "Sudeste",
+"region-south": "Sul",
+"comparison-high": "+82.6% acima",
+"comparison-below": "-3.9% abaixo",
+"comparison-low": "-17.4% abaixo",
+"key-insights": "Principais Insights",
+"insight-1": "Desigualdade Regional: Nordeste e Norte concentram 63% da população em insegurança alimentar grave",
+"insight-2": "Variação Estadual: Diferença de 27.4 pontos percentuais entre o maior e menor índice",
+"insight-3": "Impacto Demográfico: 15.5% da população brasileira vive em situação de fome",
+"insight-4": "Urgência: 33.1 milhões de brasileiros precisam de assistência alimentar imediata",
+"methodology-title": "Metodologia",
+"methodology-text": "Os dados representam a insegurança alimentar grave, situação em que as pessoas passam fome por falta de recursos para comprar alimentos. A pesquisa foi realizada em 12.745 domicílios brasileiros entre novembro de 2021 e abril de 2022.",
+
+// Formulários
+"form-name": "Nome",
+"form-email": "E-mail",
+"form-phone": "Telefone",
+"form-company": "Nome da Empresa",
+"form-value": "Valor da Doação",
+"form-select-value": "Selecione um valor",
+"form-custom-value": "Valor personalizado",
+"form-message": "Mensagem (Opcional)",
+"form-message-placeholder": "Alguma observação ou interesse específico...",
+"form-region": "Região de Atuação",
+"form-select-region": "Selecione uma região",
+"form-north": "Norte",
+"form-northeast": "Nordeste",
+"form-midwest": "Centro-Oeste",
+"form-southeast": "Sudeste",
+"form-south": "Sul",
+"form-national": "Nacional",
+"form-description": "Descrição da ONG",
+"form-description-placeholder": "Descreva o trabalho da sua organização, missão, projetos...",
+"form-people-served": "Pessoas Atendidas",
+"form-actions": "Tipos de Ação",
+"form-action-distribution": "Distribuição de alimentos",
+"form-action-agriculture": "Agricultura familiar",
+"form-action-education": "Educação nutricional",
+"form-action-reduction": "Redução de desperdício",
+"form-action-school": "Merenda escolar",
+"form-action-kitchen": "Cozinhas comunitárias",
+"form-submit": "Enviar",
+"form-submit-text": "Enviar Proposta",
+
+// Modal
+"modal-close": "Fechar",
+"ong-details": "Detalhes da ONG",
+
+// Rodapé
+"footer-slogan": "Unindo empresas contra a fome",
+"footer-description": "Transformando vidas através da conexão entre empresas e organizações sociais.",
+"quick-links": "Links Rápidos",
+"contact": "Contato",
+"footer-location": "São Paulo - SP, Brasil",
+"rights": "Todos os direitos reservados",
+"footer-message": "Feito com dedicação para um Brasil sem fome"
+},
+en: {
+// Menu e Navegação
+"site-name": "FomeZeroBrasil",
+"home": "Home",
+"about": "About Us",
+"ngos": "NGOs",
+"donors": "Donors",
+"how-to-donate": "How to Donate",
+"register": "Register",
+"hunger-map": "Hunger Map",
+
+// Home
+"hero-title": "FomeZeroBrasil: Uniting companies against hunger",
+"hero-subtitle": "We connect large companies with NGOs fighting food insecurity",
+"donate-now": "Donate Now",
+"carousel-text-1": "33.1 million Brazilians go hungry every day",
+"carousel-text-2": "125.2 million live with some degree of food insecurity",
+"carousel-text-3": "9% of children under 5 suffer from malnutrition",
+"highlight-title": "How FomeZeroBrasil Transforms Realities",
+"highlight-card-1-title": "Partner Companies",
+"highlight-card-1-text": "Over 50 large companies have joined our cause, investing in proven impact projects.",
+"highlight-card-2-title": "Strategic Connection",
+"highlight-card-2-text": "We connect corporate resources with 120+ verified NGOs across the national territory.",
+"highlight-card-3-title": "Real Impact",
+"highlight-card-3-text": "We have distributed 2.5 million meals and benefited 500,000+ people in vulnerable situations.",
+
+// Quem Somos
+"about-title": "About Us",
+"about-mission": "Our Mission",
+"about-mission-text": "FomeZeroBrasil's mission is to connect large companies with NGOs working to combat hunger and promote food security in Brazil. We believe that together we can make a difference in the lives of millions of people.",
+"about-numbers": "Our Numbers",
+"about-ngos": "+120 partner NGOs",
+"about-donations": "R$ 15 million",
+"about-people": "500,000+ people",
+"about-transparency": "94% transparency",
+"about-values": "Our Values",
+"value-1-title": "Social Impact",
+"value-1-text": "Our focus is to generate real transformation in people's lives, fighting hunger and promoting dignity through concrete and measurable actions.",
+"value-2-title": "Transparency",
+"value-2-text": "We ensure that every donation is tracked and that donors know exactly where their money is being applied, with detailed reports.",
+"value-3-title": "Cooperation",
+"value-3-text": "We believe in the power of collaboration between sectors to solve complex problems like hunger, uniting companies, NGOs and society.",
+"value-4-title": "Innovation",
+"value-4-text": "We use technology and innovative methods to connect donors and NGOs efficiently, scalable and with maximum impact.",
+
+// ONGs
+"ngos-title": "Partner NGOs",
+"ngos-subtitle": "Meet the organizations making a difference",
+"ong-1-name": "Food Action",
+"ong-1-region": "North and Northeast",
+"ong-1-description": "Distribution of basic food baskets and food education in needy communities in the North and Northeast regions of Brazil.",
+"ong-1-action": "Food distribution, Nutritional education",
+"ong-1-impact": "25,000 monthly",
+"ong-1-investment": "R$ 500,000/year",
+"ong-2-name": "Future Without Hunger",
+"ong-2-region": "Southeast",
+"ong-2-description": "Providing nutritious meals for children in vulnerable situations in schools and community daycares.",
+"ong-2-action": "School meals, Nutritional education",
+"ong-2-impact": "15,000 children per month",
+"ong-2-investment": "R$ 300,000/year",
+"ong-3-name": "Nourished Land",
+"ong-3-region": "Midwest",
+"ong-3-description": "Promoting sustainable family farming, training small producers and connecting them to local markets.",
+"ong-3-action": "Family farming, Training",
+"ong-3-impact": "5,000 farming families",
+"ong-3-investment": "R$ 200,000/year",
+"ong-4-name": "Solidarity Food",
+"ong-4-region": "South",
+"ong-4-description": "Collecting food surplus from restaurants and supermarkets, redistributing to homeless people.",
+"ong-4-action": "Waste reduction, Food distribution",
+"ong-4-impact": "10,000 weekly meals",
+"ong-4-investment": "R$ 150,000/year",
+"ong-5-name": "Community Kitchen",
+"ong-5-region": "Northeast",
+"ong-5-description": "Community kitchens that prepare nutritious meals for families in food vulnerability situations.",
+"ong-5-action": "Community kitchens, Food distribution",
+"ong-5-impact": "8,000 daily meals",
+"ong-5-investment": "R$ 400,000/year",
+"ong-6-name": "Food Education",
+"ong-6-region": "National",
+"ong-6-description": "Nutritional education programs and food security training for communities throughout Brazil.",
+"ong-6-action": "Nutritional education, Training",
+"ong-6-impact": "50,000 trained people",
+"ong-6-investment": "R$ 600,000/year",
+"ong-7-name": "Sustainable Amazon",
+"ong-7-region": "North",
+"ong-7-description": "Sustainable agriculture projects in the Amazon, promoting food security and environmental conservation.",
+"ong-7-action": "Sustainable agriculture, Conservation",
+"ong-7-impact": "3,000 riverside families",
+"ong-7-investment": "R$ 350,000/year",
+"ong-8-name": "Food Bank",
+"ong-8-region": "Southeast",
+"ong-8-description": "Collection and redistribution of food that would be wasted to needy institutions in the metropolitan region.",
+"ong-8-action": "Waste reduction, Distribution",
+"ong-8-impact": "20,000 people monthly",
+"ong-8-investment": "R$ 250,000/year",
+"ong-region": "Region",
+"ong-description": "Description",
+"ong-action": "Action Type",
+"ong-impact": "People Impacted",
+"ong-investment": "Required Investment",
+"ong-details": "Learn more",
+
+// Doadores
+"donors-title": "For Donors",
+"donors-subtitle": "Your company can transform lives",
+"filter-title": "Find the Ideal NGO",
+"filter-region": "Region of Operation",
+"filter-all-regions": "All regions",
+"filter-north": "North",
+"filter-northeast": "Northeast",
+"filter-midwest": "Midwest",
+"filter-southeast": "Southeast",
+"filter-south": "South",
+"filter-national": "National",
+"filter-action": "Action Type",
+"filter-all-actions": "All types",
+"filter-distribution": "Food distribution",
+"filter-agriculture": "Family farming",
+"filter-education": "Nutritional education",
+"filter-reduction": "Waste reduction",
+"filter-school": "School meals",
+"filter-kitchen": "Community kitchens",
+"filter-sort": "Sort by",
+"sort-name": "Name A-Z",
+"sort-impact": "Highest impact",
+"sort-investment": "Lowest investment",
+"filter-reset": "Clear Filters",
+"transparency-title": "Real-Time Monitoring",
+"transparency-subtitle": "See how your investment is being applied and the impact generated",
+"transparency-1-title": "Monthly Reports",
+"transparency-1-text": "Complete detailing of resource application",
+"transparency-2-title": "Photos and Videos",
+"transparency-2-text": "Visual record of actions taken",
+"transparency-3-title": "Impact Metrics",
+"transparency-3-text": "Beneficiary people indicators",
+"transparency-4-title": "Direct Contact",
+"transparency-4-text": "Communication with partner NGO",
+"donors-benefit-1": "Total Transparency",
+"donors-benefit-1-text": "Detailed reports with photos, videos and metrics show exactly where every real was applied and the impact generated.",
+"donors-benefit-2": "Measurable Impact",
+"donors-benefit-2-text": "Track concrete indicators: meals served, families served, communities transformed.",
+"donors-benefit-3": "Recognition",
+"donors-benefit-3-text": "Socially Responsible Company Certificate and visibility on our platforms and media.",
+"donors-form-title": "I Want to Be a Donor",
+
+// Como Doar
+"how-to-donate-title": "How to Make Your Donation",
+"how-to-donate-subtitle": "In just 4 simple steps",
+"step-1-title": "Choose an NGO",
+"step-1-text": "Browse our list of verified NGOs and choose one that aligns with your company's values.",
+"step-2-title": "Select a Project",
+"step-2-text": "Each NGO has specific projects you can support. Choose the one that best connects with your company.",
+"step-3-title": "Choose the Amount",
+"step-3-text": "Set your donation amount. Any amount makes a difference! We offer flexible payment options.",
+"step-4-title": "Complete the Donation",
+"step-4-text": "Fill in the necessary data and confirm your donation. You will receive a receipt and periodic reports.",
+"start-donation": "Start Donation",
+
+// Cadastre-se
+"register-title": "Register Your NGO",
+"register-subtitle": "Join our network of organizations fighting hunger",
+
+// Mapa da Fome
+"hunger-map-title": "Hunger Map of Brazil",
+"hunger-map-subtitle": "View food insecurity data by state",
+"legend-title": "Severe Food Insecurity (%)",
+"legend-1": "0% - 5%",
+"legend-2": "5% - 10%",
+"legend-3": "10% - 15%",
+"legend-4": "15% - 20%",
+"legend-5": "20% - 25%",
+"legend-6": "25% - 30%",
+"legend-7": "30% - 35%",
+"legend-8": "35% - 40%",
+"legend-9": "40%+",
+"stats-title": "Statistical Analysis of Hunger in Brazil",
+"stats-source": "Source",
+"stat-national-average": "National Average",
+"stat-people-affected": "People in Severe FI",
+"stat-highest-rate": "Highest Rate (MA)",
+"stat-lowest-rate": "Lowest Rate (SC)",
+"regional-analysis": "Regional Analysis",
+"table-region": "Region",
+"table-rate": "Severe FI Rate",
+"table-comparison": "Comparison with Average",
+"table-population": "Affected Population",
+"region-northeast": "Northeast",
+"region-north": "North",
+"region-midwest": "Midwest",
+"region-southeast": "Southeast",
+"region-south": "South",
+"comparison-high": "+82.6% above",
+"comparison-below": "-3.9% below",
+"comparison-low": "-17.4% below",
+"key-insights": "Key Insights",
+"insight-1": "Regional Inequality: Northeast and North concentrate 63% of population in severe food insecurity",
+"insight-2": "State Variation: 27.4 percentage points difference between highest and lowest rate",
+"insight-3": "Demographic Impact: 15.5% of Brazilian population lives in hunger situation",
+"insight-4": "Urgency: 33.1 million Brazilians need immediate food assistance",
+"methodology-title": "Methodology",
+"methodology-text": "Data represents severe food insecurity, situation where people go hungry due to lack of resources to buy food. The survey was conducted in 12,745 Brazilian households between November 2021 and April 2022.",
+
+// Formulários
+"form-name": "Name",
+"form-email": "Email",
+"form-phone": "Phone",
+"form-company": "Company Name",
+"form-value": "Donation Value",
+"form-select-value": "Select a value",
+"form-custom-value": "Custom value",
+"form-message": "Message (Optional)",
+"form-message-placeholder": "Any observation or specific interest...",
+"form-region": "Region of Operation",
+"form-select-region": "Select a region",
+"form-north": "North",
+"form-northeast": "Northeast",
+"form-midwest": "Midwest",
+"form-southeast": "Southeast",
+"form-south": "South",
+"form-national": "National",
+"form-description": "NGO Description",
+"form-description-placeholder": "Describe your organization's work, mission, projects...",
+"form-people-served": "People Served",
+"form-actions": "Action Types",
+"form-action-distribution": "Food distribution",
+"form-action-agriculture": "Family farming",
+"form-action-education": "Nutritional education",
+"form-action-reduction": "Waste reduction",
+"form-action-school": "School meals",
+"form-action-kitchen": "Community kitchens",
+"form-submit": "Submit",
+"form-submit-text": "Send Proposal",
+
+// Modal
+"modal-close": "Close",
+"ong-details": "NGO Details",
+
+// Rodapé
+"footer-slogan": "Uniting companies against hunger",
+"footer-description": "Transforming lives through the connection between companies and social organizations.",
+"quick-links": "Quick Links",
+"contact": "Contact",
+"footer-location": "São Paulo - SP, Brazil",
+"rights": "All rights reserved",
+"footer-message": "Made with dedication for a Brazil without hunger"
+},
+es: {
+// Menu e Navegação
+"site-name": "FomeZeroBrasil",
+"home": "Inicio",
+"about": "Quiénes Somos",
+"ngos": "ONGs",
+"donors": "Donantes",
+"how-to-donate": "Cómo Donar",
+"register": "Registrarse",
+"hunger-map": "Mapa del Hambre",
+
+// Home
+"hero-title": "FomeZeroBrasil: Uniendo empresas contra el hambre",
+"hero-subtitle": "Conectamos grandes empresas con ONG que combaten la inseguridad alimentaria",
+"donate-now": "Dona Ahora",
+"carousel-text-1": "33,1 millones de brasileños pasan hambre todos los días",
+"carousel-text-2": "125,2 millones viven con algún grado de inseguridad alimentaria",
+"carousel-text-3": "9% de los niños menores de 5 años sufren desnutrición",
+"highlight-title": "Cómo FomeZeroBrasil Transforma Realidades",
+"highlight-card-1-title": "Empresas Socias",
+"highlight-card-1-text": "Más de 50 grandes empresas se han unido a nuestra causa, invirtiendo en proyectos de impacto comprobado.",
+"highlight-card-2-title": "Conexión Estratégica",
+"highlight-card-2-text": "Conectamos recursos corporativos con 120+ ONG verificadas en todo el territorio nacional.",
+"highlight-card-3-title": "Impacto Real",
+"highlight-card-3-text": "Hemos distribuido 2,5 millones de comidas y beneficiado a 500.000+ personas en situación de vulnerabilidad.",
+
+// Quem Somos
+"about-title": "Quiénes Somos",
+"about-mission": "Nuestra Misión",
+"about-mission-text": "La misión de FomeZeroBrasil es conectar grandes empresas con ONG que trabajan para combatir el hambre y promover la seguridad alimentaria en Brasil. Creemos que juntos podemos marcar la diferencia en la vida de millones de personas.",
+"about-numbers": "Nuestros Números",
+"about-ngos": "+120 ONG socias",
+"about-donations": "R$ 15 millones",
+"about-people": "500.000+ personas",
+"about-transparency": "94% de transparencia",
+"about-values": "Nuestros Valores",
+"value-1-title": "Impacto Social",
+"value-1-text": "Nuestro enfoque es generar transformación real en la vida de las personas, combatiendo el hambre y promoviendo dignidad a través de acciones concretas y mensurables.",
+"value-2-title": "Transparencia",
+"value-2-text": "Garantizamos que cada donación sea rastreada y que los donantes sepan exactamente dónde se aplica su dinero, con informes detallados.",
+"value-3-title": "Cooperación",
+"value-3-text": "Creemos en el poder de la colaboración entre sectores para resolver problemas complejos como el hambre, uniendo empresas, ONG y sociedad.",
+"value-4-title": "Innovación",
+"value-4-text": "Utilizamos tecnología y métodos innovadores para conectar donantes y ONG de forma eficiente, escalable y con máximo impacto.",
+
+// ONGs
+"ngos-title": "ONGs Asociadas",
+"ngos-subtitle": "Conoce las organizaciones que marcan la diferencia",
+"ong-1-name": "Acción Alimentaria",
+"ong-1-region": "Norte y Nordeste",
+"ong-1-description": "Distribución de cestas básicas y educación alimentaria en comunidades necesitadas de las regiones Norte y Nordeste de Brasil.",
+"ong-1-action": "Distribución de alimentos, Educación nutricional",
+"ong-1-impact": "25.000 mensualmente",
+"ong-1-investment": "R$ 500.000/año",
+"ong-2-name": "Futuro sin Hambre",
+"ong-2-region": "Sudeste",
+"ong-2-description": "Ofreciendo comidas nutritivas para niños en situación de vulnerabilidad en escuelas y guarderías comunitarias.",
+"ong-2-action": "Merienda escolar, Educación nutricional",
+"ong-2-impact": "15.000 niños por mes",
+"ong-2-investment": "R$ 300.000/año",
+"ong-3-name": "Tierra Nutrida",
+"ong-3-region": "Centro-Oeste",
+"ong-3-description": "Promoviendo agricultura familiar sostenible, capacitando pequeños productores y conectándolos con mercados locales.",
+"ong-3-action": "Agricultura familiar, Capacitación",
+"ong-3-impact": "5.000 familias agricultoras",
+"ong-3-investment": "R$ 200.000/año",
+"ong-4-name": "Alimentación Solidaria",
+"ong-4-region": "Sur",
+"ong-4-description": "Recolección de excedentes alimentarios de restaurantes y supermercados, redistribuyendo a personas en situación de calle.",
+"ong-4-action": "Reducción de desperdicio, Distribución de alimentos",
+"ong-4-impact": "10.000 comidas semanales",
+"ong-4-investment": "R$ 150.000/año",
+"ong-5-name": "Cocina Comunitaria",
+"ong-5-region": "Nordeste",
+"ong-5-description": "Cocinas comunitarias que preparan comidas nutritivas para familias en situación de vulnerabilidad alimentaria.",
+"ong-5-action": "Cocinas comunitarias, Distribución de alimentos",
+"ong-5-impact": "8.000 comidas diarias",
+"ong-5-investment": "R$ 400.000/año",
+"ong-6-name": "Educación Alimentaria",
+"ong-6-region": "Nacional",
+"ong-6-description": "Programas de educación nutricional y capacitación en seguridad alimentaria para comunidades en todo Brasil.",
+"ong-6-action": "Educación nutricional, Capacitación",
+"ong-6-impact": "50.000 personas capacitadas",
+"ong-6-investment": "R$ 600.000/año",
+"ong-7-name": "Amazonía Sostenible",
+"ong-7-region": "Norte",
+"ong-7-description": "Proyectos de agricultura sostenible en la Amazonía, promoviendo seguridad alimentaria y conservación ambiental.",
+"ong-7-action": "Agricultura sostenible, Conservación",
+"ong-7-impact": "3.000 familias ribereñas",
+"ong-7-investment": "R$ 350.000/año",
+"ong-8-name": "Banco de Alimentos",
+"ong-8-region": "Sudeste",
+"ong-8-description": "Recolección y redistribución de alimentos que serían desperdiciados a instituciones necesitadas de la región metropolitana.",
+"ong-8-action": "Reducción de desperdicio, Distribución",
+"ong-8-impact": "20.000 personas mensualmente",
+"ong-8-investment": "R$ 250.000/año",
+"ong-region": "Región",
+"ong-description": "Descripción",
+"ong-action": "Tipo de Acción",
+"ong-impact": "Personas Impactadas",
+"ong-investment": "Inversión Necesaria",
+"ong-details": "Saber más",
+
+// Doadores
+"donors-title": "Para Donantes",
+"donors-subtitle": "Tu empresa puede transformar vidas",
+"filter-title": "Encuentra la ONG Ideal",
+"filter-region": "Región de Actuación",
+"filter-all-regions": "Todas las regiones",
+"filter-north": "Norte",
+"filter-northeast": "Nordeste",
+"filter-midwest": "Centro-Oeste",
+"filter-southeast": "Sudeste",
+"filter-south": "Sur",
+"filter-national": "Nacional",
+"filter-action": "Tipo de Acción",
+"filter-all-actions": "Todos los tipos",
+"filter-distribution": "Distribución de alimentos",
+"filter-agriculture": "Agricultura familiar",
+"filter-education": "Educación nutricional",
+"filter-reduction": "Reducción de desperdicio",
+"filter-school": "Merienda escolar",
+"filter-kitchen": "Cocinas comunitarias",
+"filter-sort": "Ordenar por",
+"sort-name": "Nombre A-Z",
+"sort-impact": "Mayor impacto",
+"sort-investment": "Menor inversión",
+"filter-reset": "Limpiar Filtros",
+"transparency-title": "Seguimiento en Tiempo Real",
+"transparency-subtitle": "Vea cómo se aplica su inversión y el impacto generado",
+"transparency-1-title": "Informes Mensuales",
+"transparency-1-text": "Detallamiento completo de la aplicación de recursos",
+"transparency-2-title": "Fotos y Videos",
+"transparency-2-text": "Registro visual de las acciones realizadas",
+"transparency-3-title": "Métricas de Impacto",
+"transparency-3-text": "Indicadores de personas beneficiadas",
+"transparency-4-title": "Contacto Directo",
+"transparency-4-text": "Comunicación con la ONG socia",
+"donors-benefit-1": "Transparencia Total",
+"donors-benefit-1-text": "Informes detallados con fotos, videos y métricas muestran exactamente dónde se aplicó cada real y el impacto generado.",
+"donors-benefit-2": "Impacto Medible",
+"donors-benefit-2-text": "Acompañe indicadores concretos: comidas servidas, familias atendidas, comunidades transformadas.",
+"donors-benefit-3": "Reconocimiento",
+"donors-benefit-3-text": "Certificado de Empresa Socialmente Responsable y visibilidad en nuestras plataformas y medios.",
+"donors-form-title": "Quiero Ser Donante",
+
+// Como Doar
+"how-to-donate-title": "Cómo Hacer tu Donación",
+"how-to-donate-subtitle": "En solo 4 pasos simples",
+"step-1-title": "Elige una ONG",
+"step-1-text": "Navega por nuestra lista de ONG verificadas y elige una que se alinee con los valores de tu empresa.",
+"step-2-title": "Selecciona un Proyecto",
+"step-2-text": "Cada ONG tiene proyectos específicos que puedes apoyar. Elige el que mejor se conecte con tu empresa.",
+"step-3-title": "Elige el Monto",
+"step-3-text": "Define el monto de tu donación. ¡Cualquier cantidad marca la diferencia! Ofrecemos opciones flexibles de pago.",
+"step-4-title": "Finaliza la Donación",
+"step-4-text": "Completa los datos necesarios y confirma tu donación. Recibirás un comprobante e informes periódicos.",
+"start-donation": "Comenzar Donación",
+
+// Cadastre-se
+"register-title": "Registra tu ONG",
+"register-subtitle": "Únete a nuestra red de organizaciones que combaten el hambre",
+
+// Mapa da Fome
+"hunger-map-title": "Mapa del Hambre en Brasil",
+"hunger-map-subtitle": "Visualiza los datos de inseguridad alimentaria por estado",
+"legend-title": "Inseguridad Alimentaria Grave (%)",
+"legend-1": "0% - 5%",
+"legend-2": "5% - 10%",
+"legend-3": "10% - 15%",
+"legend-4": "15% - 20%",
+"legend-5": "20% - 25%",
+"legend-6": "25% - 30%",
+"legend-7": "30% - 35%",
+"legend-8": "35% - 40%",
+"legend-9": "40%+",
+"stats-title": "Análisis Estadístico del Hambre en Brasil",
+"stats-source": "Fuente",
+"stat-national-average": "Promedio Nacional",
+"stat-people-affected": "Personas en IA Grave",
+"stat-highest-rate": "Mayor Índice (MA)",
+"stat-lowest-rate": "Menor Índice (SC)",
+"regional-analysis": "Análisis Regional",
+"table-region": "Región",
+"table-rate": "Tasa IA Grave",
+"table-comparison": "Comparación con Promedio",
+"table-population": "Población Afectada",
+"region-northeast": "Nordeste",
+"region-north": "Norte",
+"region-midwest": "Centro-Oeste",
+"region-southeast": "Sudeste",
+"region-south": "Sur",
+"comparison-high": "+82.6% arriba",
+"comparison-below": "-3.9% abajo",
+"comparison-low": "-17.4% abajo",
+"key-insights": "Principales Hallazgos",
+"insight-1": "Desigualdad Regional: Nordeste y Norte concentran 63% de la población en inseguridad alimentaria grave",
+"insight-2": "Variación Estatal: Diferencia de 27.4 puntos porcentuales entre mayor y menor índice",
+"insight-3": "Impacto Demográfico: 15.5% de la población brasileña vive en situación de hambre",
+"insight-4": "Urgencia: 33.1 millones de brasileños necesitan asistencia alimentaria inmediata",
+"methodology-title": "Metodología",
+"methodology-text": "Los datos representan la inseguridad alimentaria grave, situación en que las personas pasan hambre por falta de recursos para comprar alimentos. La investigación se realizó en 12.745 hogares brasileños entre noviembre 2021 y abril 2022.",
+
+// Formulários
+"form-name": "Nombre",
+"form-email": "Correo Electrónico",
+"form-phone": "Teléfono",
+"form-company": "Nombre de la Empresa",
+"form-value": "Valor de la Donación",
+"form-select-value": "Seleccione un valor",
+"form-custom-value": "Valor personalizado",
+"form-message": "Mensaje (Opcional)",
+"form-message-placeholder": "Alguna observación o interés específico...",
+"form-region": "Región de Actuación",
+"form-select-region": "Seleccione una región",
+"form-north": "Norte",
+"form-northeast": "Nordeste",
+"form-midwest": "Centro-Oeste",
+"form-southeast": "Sudeste",
+"form-south": "Sur",
+"form-national": "Nacional",
+"form-description": "Descripción de la ONG",
+"form-description-placeholder": "Describa el trabajo de su organización, misión, proyectos...",
+"form-people-served": "Personas Atendidas",
+"form-actions": "Tipos de Acción",
+"form-action-distribution": "Distribución de alimentos",
+"form-action-agriculture": "Agricultura familiar",
+"form-action-education": "Educación nutricional",
+"form-action-reduction": "Reducción de desperdicio",
+"form-action-school": "Merienda escolar",
+"form-action-kitchen": "Cocinas comunitarias",
+"form-submit": "Enviar",
+"form-submit-text": "Enviar Propuesta",
+
+// Modal
+"modal-close": "Cerrar",
+"ong-details": "Detalles de la ONG",
+
+// Rodapé
+"footer-slogan": "Uniendo empresas contra el hambre",
+"footer-description": "Transformando vidas a través de la conexión entre empresas y organizaciones sociales.",
+"quick-links": "Enlaces Rápidos",
+"contact": "Contacto",
+"footer-location": "São Paulo - SP, Brasil",
+"rights": "Todos los derechos reservados",
+"footer-message": "Hecho con dedicación para un Brasil sin hambre"
+}
+};
+
+// === MAPA INTERATIVO FUNCIONAL COM DADOS REAIS ===
+function initMap() {
+if (!document.getElementById('map')) return;
+
+const map = L.map('map').setView([-14.2350, -51.9253], 4);
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+}).addTo(map);
+
+// Dados REAIS da PENSSAN 2022 - Insegurança Alimentar Grave
+const foodInsecurityData = {
+"AC": 18.5, "AL": 36.7, "AM": 25.3, "AP": 32.1, "BA": 30.5,
+"CE": 29.8, "DF": 12.3, "ES": 15.2, "GO": 16.8, "MA": 38.2,
+"MG": 18.9, "MS": 14.7, "MT": 15.1, "PA": 28.4, "PB": 31.6,
+"PE": 33.2, "PI": 34.8, "PR": 13.5, "RJ": 19.4, "RN": 28.9,
+"RO": 20.1, "RR": 23.7, "RS": 14.2, "SC": 10.8, "SE": 29.3,
+"SP": 15.6, "TO": 24.5
+};
+
+function getColor(percentage) {
+return percentage > 35 ? '#800026' :
+percentage > 30 ? '#bd0026' :
+percentage > 25 ? '#e31a1c' :
+percentage > 20 ? '#fc4e2a' :
+percentage > 15 ? '#fd8d3c' :
+percentage > 10 ? '#feb24c' :
+percentage > 5 ? '#fed976' :
+'#ffffcc';
+}
+
+// Coordenadas precisas dos estados
+const stateBounds = {
+"AC": [[-11.0, -73.0], [-7.0, -66.0]], "AL": [[-10.5, -38.0], [-8.5, -35.0]],
+"AM": [[-9.0, -73.0], [1.0, -57.0]], "AP": [[3.0, -54.0], [5.0, -50.0]],
+"BA": [[-18.0, -46.0], [-10.0, -37.0]], "CE": [[-7.5, -41.0], [-2.5, -37.0]],
+"DF": [[-16.0, -48.0], [-15.0, -47.0]], "ES": [[-21.0, -41.0], [-17.0, -39.0]],
+"GO": [[-19.0, -53.0], [-13.0, -46.0]], "MA": [[-10.0, -48.0], [-1.0, -42.0]],
+"MG": [[-22.0, -51.0], [-14.0, -39.0]], "MS": [[-24.0, -58.0], [-17.0, -51.0]],
+"MT": [[-18.0, -61.0], [-7.0, -50.0]], "PA": [[-10.0, -58.0], [2.0, -46.0]],
+"PB": [[-8.5, -38.5], [-6.0, -34.5]], "PE": [[-10.0, -41.0], [-7.0, -34.0]],
+"PI": [[-11.0, -45.0], [-5.0, -41.0]], "PR": [[-26.0, -54.0], [-22.0, -48.0]],
+"RJ": [[-23.5, -45.0], [-20.5, -40.5]], "RN": [[-6.5, -38.0], [-4.5, -35.0]],
+"RO": [[-13.0, -65.0], [-8.0, -59.0]], "RR": [[0.5, -65.0], [5.5, -59.0]],
+"RS": [[-34.0, -57.0], [-27.0, -49.0]], "SC": [[-29.0, -53.0], [-25.5, -48.0]],
+"SE": [[-11.5, -38.0], [-10.0, -36.0]], "SP": [[-25.0, -53.0], [-19.5, -44.0]],
+"TO": [[-13.5, -50.0], [-5.0, -45.0]]
+};
+
+const stateNames = {
+"AC": "Acre", "AL": "Alagoas", "AM": "Amazonas", "AP": "Amapá", "BA": "Bahia",
+"CE": "Ceará", "DF": "Distrito Federal", "ES": "Espírito Santo", "GO": "Goiás",
+"MA": "Maranhão", "MG": "Minas Gerais", "MS": "Mato Grosso do Sul", "MT": "Mato Grosso",
+"PA": "Pará", "PB": "Paraíba", "PE": "Pernambuco", "PI": "Piauí", "PR": "Paraná",
+"RJ": "Rio de Janeiro", "RN": "Rio Grande do Norte", "RO": "Rondônia", "RR": "Roraima",
+"RS": "Rio Grande do Sul", "SC": "Santa Catarina", "SE": "Sergipe", "SP": "São Paulo",
+"TO": "Tocantins"
+};
+
+// Adicionar estados ao mapa
+Object.keys(stateBounds).forEach(stateCode => {
+const bounds = stateBounds[stateCode];
+const percentage = foodInsecurityData[stateCode];
+const stateName = stateNames[stateCode];
+
+const rectangle = L.rectangle(bounds, {
+color: getColor(percentage),
+weight: 2,
+fillOpacity: 0.7,
+className: 'state-area'
+}).addTo(map);
+
+rectangle.bindTooltip(`
+<div style="text-align: center; padding: 8px;">
+<strong>${stateName}</strong><br>
+Insegurança alimentar grave: <b>${percentage}%</b>
+<br><small>Fonte: PENSSAN 2022</small>
+</div>
+`, {
+permanent: false,
+direction: 'center',
+className: 'state-tooltip'
+});
+
+rectangle.on('mouseover', function(e) {
+this.setStyle({
+weight: 3,
+fillOpacity: 0.9
+});
+this.bringToFront();
+});
+
+rectangle.on('mouseout', function(e) {
+this.setStyle({
+weight: 2,
+fillOpacity: 0.7
+});
+});
+
+rectangle.on('click', function(e) {
+map.fitBounds(bounds, {
+padding: [20, 20],
+maxZoom: 7
+});
+});
+});
+
+setTimeout(() => {
+map.invalidateSize();
+}, 100);
+}
+
+// === FUNCIONALIDADES GERAIS COMPLETAS ===
+document.addEventListener('DOMContentLoaded', function() {
+// Sistema de tradução
+let currentLang = localStorage.getItem('preferred-language') || 'pt';
+
+function applyTranslations(lang) {
+const elements = document.querySelectorAll('[data-key]');
+
+elements.forEach(element => {
+const key = element.getAttribute('data-key');
+if (translations[lang] && translations[lang][key]) {
+if (element.tagName === 'INPUT' && element.type === 'submit') {
+element.value = translations[lang][key];
+} else if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+element.placeholder = translations[lang][key];
+} else if (element.tagName === 'OPTION') {
+element.textContent = translations[lang][key];
+} else {
+element.textContent = translations[lang][key];
+}
+}
+});
+
+// Atualizar botões de idioma ativo
+document.querySelectorAll('.lang-btn').forEach(btn => {
+btn.classList.remove('active');
+if (btn.getAttribute('data-lang') === lang) {
+btn.classList.add('active');
+}
+});
+
+// Salvar preferência de idioma
+localStorage.setItem('preferred-language', lang);
+}
+
+// Aplicar traduções iniciais
+applyTranslations(currentLang);
+
+// Event listeners para botões de idioma
+document.querySelectorAll('.lang-btn').forEach(btn => {
+btn.addEventListener('click', function() {
+const lang = this.getAttribute('data-lang');
+applyTranslations(lang);
+});
+});
+
+// Menu hamburger para mobile
+const hamburger = document.querySelector('.hamburger');
+const navMenu = document.querySelector('.nav-menu');
+
+if (hamburger && navMenu) {
+hamburger.addEventListener('click', function() {
+hamburger.classList.toggle('active');
+navMenu.classList.toggle('active');
+});
+
+// Fechar menu ao clicar em um link
+document.querySelectorAll('.nav-link').forEach(link => {
+link.addEventListener('click', () => {
+hamburger.classList.remove('active');
+navMenu.classList.remove('active');
+});
+});
+}
+
+// Carrossel automático
+const carouselSlides = document.querySelectorAll('.carousel-slide');
+const indicators = document.querySelectorAll('.indicator');
+let currentSlide = 0;
+
+function showSlide(n) {
+carouselSlides.forEach(slide => slide.classList.remove('active'));
+indicators.forEach(indicator => indicator.classList.remove('active'));
+
+currentSlide = (n + carouselSlides.length) % carouselSlides.length;
+
+carouselSlides[currentSlide].classList.add('active');
+indicators[currentSlide].classList.add('active');
+}
+
+// Avançar slide automaticamente a cada 5 segundos
+setInterval(() => {
+showSlide(currentSlide + 1);
+}, 5000);
+
+// Adicionar event listeners aos indicadores
+indicators.forEach((indicator, index) => {
+indicator.addEventListener('click', () => {
+showSlide(index);
+});
+});
+
+// Sistema de navegação entre páginas
+function showPage(pageId) {
+// Esconder todas as páginas
+document.querySelectorAll('.page').forEach(page => {
+page.classList.remove('active');
+});
+
+// Remover classe active de todos os links
+document.querySelectorAll('.nav-link').forEach(link => {
+link.classList.remove('active');
+});
+
+// Mostrar página selecionada
+const targetPage = document.getElementById(pageId);
+if (targetPage) {
+targetPage.classList.add('active');
+
+// Ativar link correspondente
+const activeLink = document.querySelector(`.nav-link[data-page="${pageId}"]`);
+if (activeLink) {
+activeLink.classList.add('active');
+}
+
+// Scroll para o topo
+window.scrollTo(0, 0);
+
+// Inicializar mapa se for a página do mapa
+if (pageId === 'mapa-fome') {
+setTimeout(initMap, 300);
+}
+}
+}
+
+// Event listeners para links de página
+document.querySelectorAll('.page-link').forEach(link => {
+link.addEventListener('click', function(e) {
+e.preventDefault();
+const pageId = this.getAttribute('data-page');
+showPage(pageId);
+
+// Atualizar URL
+window.location.hash = pageId;
+});
+});
+
+// Verificar hash na URL ao carregar a página
+if (window.location.hash) {
+const pageId = window.location.hash.substring(1);
+showPage(pageId);
+}
+
+// Sistema de Filtros
+const filterRegion = document.getElementById('filter-region');
+const filterAction = document.getElementById('filter-action');
+const filterSort = document.getElementById('filter-sort');
+const resetFilters = document.getElementById('reset-filters');
+const ongCards = document.querySelectorAll('.ong-card');
+
+function filterONGs() {
+const regionValue = filterRegion.value;
+const actionValue = filterAction.value;
+const sortValue = filterSort.value;
+
+ongCards.forEach(card => {
+const cardRegion = card.getAttribute('data-region');
+const cardAction = card.getAttribute('data-action');
+const cardName = card.querySelector('h3').textContent;
+const cardImpact = parseInt(card.querySelector('.ong-card-body p:nth-child(4)').textContent.replace(/\D/g, ''));
+const cardInvestment = parseInt(card.querySelector('.ong-card-body p:nth-child(5)').textContent.replace(/\D/g, ''));
+
+let regionMatch = !regionValue || cardRegion.includes(regionValue);
+let actionMatch = !actionValue || cardAction.includes(actionValue);
+
+if (regionMatch && actionMatch) {
+card.style.display = 'block';
+} else {
+card.style.display = 'none';
+}
+});
+
+// Ordenação
+const visibleCards = Array.from(ongCards).filter(card => card.style.display !== 'none');
+const container = document.querySelector('.ong-cards');
+
+visibleCards.sort((a, b) => {
+const aName = a.querySelector('h3').textContent;
+const bName = b.querySelector('h3').textContent;
+const aImpact = parseInt(a.querySelector('.ong-card-body p:nth-child(4)').textContent.replace(/\D/g, ''));
+const bImpact = parseInt(b.querySelector('.ong-card-body p:nth-child(4)').textContent.replace(/\D/g, ''));
+const aInvestment = parseInt(a.querySelector('.ong-card-body p:nth-child(5)').textContent.replace(/\D/g, ''));
+const bInvestment = parseInt(b.querySelector('.ong-card-body p:nth-child(5)').textContent.replace(/\D/g, ''));
+
+switch(sortValue) {
+case 'nome':
+return aName.localeCompare(bName);
+case 'impacto':
+return bImpact - aImpact;
+case 'investimento':
+return aInvestment - bInvestment;
+default:
+return 0;
+}
+});
+
+// Reordenar no DOM
+visibleCards.forEach(card => {
+container.appendChild(card);
+});
+}
+
+if (filterRegion && filterAction && filterSort) {
+filterRegion.addEventListener('change', filterONGs);
+filterAction.addEventListener('change', filterONGs);
+filterSort.addEventListener('change', filterONGs);
+resetFilters.addEventListener('click', function() {
+filterRegion.value = '';
+filterAction.value = '';
+filterSort.value = 'nome';
+filterONGs();
+});
+}
+
+// Modal para ONGs
+const modal = document.getElementById('ong-modal');
+const modalClose = document.querySelector('.modal-close');
+const modalTitle = document.getElementById('modal-title');
+const modalRegion = document.getElementById('modal-region');
+const modalDescription = document.getElementById('modal-description');
+const modalActions = document.getElementById('modal-actions');
+const modalImpact = document.getElementById('modal-impact');
+const modalInvestment = document.getElementById('modal-investment');
+
+// Dados das ONGs
+const ongsData = {
+'acao-alimentar': {
+title: 'Ação Alimentar',
+region: 'Norte e Nordeste',
+description: 'Trabalhamos distribuindo cestas básicas e promovendo educação alimentar em comunidades carentes das regiões Norte e Nordeste do Brasil.',
+impact: '25.000 pessoas impactadas mensalmente',
+actions: 'Distribuição de alimentos, Educação nutricional',
+investment: 'R$ 500.000/ano'
+},
+'futuro-sem-fome': {
+title: 'Futuro sem Fome',
+region: 'Sudeste',
+description: 'Atuamos na periferia de grandes centros urbanos, oferecendo refeições nutritivas para crianças em situação de vulnerabilidade.',
+impact: '15.000 crianças atendidas por mês',
+actions: 'Merenda escolar, Educação nutricional',
+investment: 'R$ 300.000/ano'
+},
+'terra-nutrida': {
+title: 'Terra Nutrida',
+region: 'Centro-Oeste',
+description: 'Promovemos agricultura familiar sustentável, capacitando pequenos produtores e conectando-os a mercados locais.',
+impact: '5.000 famílias agricultoras apoiadas',
+actions: 'Agricultura familiar, Capacitação',
+investment: 'R$ 200.000/ano'
+},
+'alimentacao-solidaria': {
+title: 'Alimentação Solidária',
+region: 'Sul',
+description: 'Coletamos excedentes alimentares de restaurantes e supermercados, redistribuindo para pessoas em situação de rua e abrigos.',
+impact: '10.000 refeições distribuídas semanalmente',
+actions: 'Redução de desperdício, Distribuição de alimentos',
+investment: 'R$ 150.000/ano'
+},
+'cozinha-comunitaria': {
+title: 'Cozinha Comunitária',
+region: 'Nordeste',
+description: 'Cozinhas comunitárias que preparam refeições nutritivas para famílias em situação de vulnerabilidade alimentar.',
+impact: '8.000 refeições diárias',
+actions: 'Cozinhas comunitárias, Distribuição de alimentos',
+investment: 'R$ 400.000/ano'
+},
+'educacao-alimentar': {
+title: 'Educação Alimentar',
+region: 'Nacional',
+description: 'Programas de educação nutricional e capacitação em segurança alimentar para comunidades em todo o Brasil.',
+impact: '50.000 pessoas capacitadas',
+actions: 'Educação nutricional, Capacitação',
+investment: 'R$ 600.000/ano'
+},
+'amazonia-sustentavel': {
+title: 'Amazônia Sustentável',
+region: 'Norte',
+description: 'Projetos de agricultura sustentável na Amazônia, promovendo segurança alimentar e conservação ambiental.',
+impact: '3.000 famílias ribeirinhas',
+actions: 'Agricultura sustentável, Conservação',
+investment: 'R$ 350.000/ano'
+},
+'banco-alimentos': {
+title: 'Banco de Alimentos',
+region: 'Sudeste',
+description: 'Coleta e redistribuição de alimentos que seriam desperdiçados para instituições carentes da região metropolitana.',
+impact: '20.000 pessoas mensalmente',
+actions: 'Redução de desperdício, Distribuição',
+investment: 'R$ 250.000/ano'
+}
+};
+
+// Abrir modal ao clicar em "Saiba mais"
+document.querySelectorAll('.ong-button').forEach(button => {
+button.addEventListener('click', function() {
+const ongId = this.getAttribute('data-ong');
+const ongData = ongsData[ongId];
+
+if (ongData && modal) {
+modalTitle.textContent = ongData.title;
+modalRegion.textContent = ongData.region;
+modalDescription.textContent = ongData.description;
+modalImpact.textContent = ongData.impact;
+modalActions.textContent = ongData.actions;
+modalInvestment.textContent = ongData.investment;
+
+modal.style.display = 'flex';
+}
+});
+});
+
+// Fechar modal
+if (modalClose && modal) {
+modalClose.addEventListener('click', () => {
+modal.style.display = 'none';
+});
+
+// Fechar modal ao clicar fora do conteúdo
+modal.addEventListener('click', (e) => {
+if (e.target === modal) {
+modal.style.display = 'none';
+}
+});
+}
+
+// Sistema de formulários funcionais com Formspree
+const forms = document.querySelectorAll('form');
+
+forms.forEach(form => {
+form.addEventListener('submit', function(e) {
+e.preventDefault();
+
+// Validação básica
+let isValid = true;
+const inputs = this.querySelectorAll('input[required], textarea[required], select[required]');
+const feedback = this.querySelector('.form-feedback');
+
+inputs.forEach(input => {
+if (!input.value.trim()) {
+isValid = false;
+input.classList.add('error');
+input.classList.remove('success');
+} else {
+input.classList.remove('error');
+input.classList.add('success');
+}
+});
+
+if (isValid) {
+const submitBtn = this.querySelector('.submit-button');
+const originalText = submitBtn.innerHTML;
+
+// Mostrar loading
+submitBtn.innerHTML = currentLang === 'pt' ? 'Enviando...' :
+currentLang === 'en' ? 'Sending...' :
+'Enviando...';
+submitBtn.disabled = true;
+
+// Enviar formulário via Formspree
+fetch(this.action, {
+method: 'POST',
+body: new FormData(this),
+headers: {
+'Accept': 'application/json'
+}
+}).then(response => {
+if (response.ok) {
+if (feedback) {
+feedback.textContent = currentLang === 'pt' ? 'Formulário enviado com sucesso! Em breve entraremos em contato.' :
+currentLang === 'en' ? 'Form submitted successfully! We will contact you soon.' :
+'Formulario enviado con éxito! Nos pondremos en contacto pronto.';
+feedback.className = 'form-feedback success';
+}
+
+this.reset();
+} else {
+throw new Error('Erro no envio');
+}
+}).catch(error => {
+if (feedback) {
+feedback.textContent = currentLang === 'pt' ? 'Erro ao enviar formulário. Tente novamente.' :
+currentLang === 'en' ? 'Error sending form. Please try again.' :
+'Error al enviar formulario. Intente nuevamente.';
+feedback.className = 'form-feedback error';
+}
+}).finally(() => {
+// Restaurar botão
+submitBtn.innerHTML = originalText;
+submitBtn.disabled = false;
+
+// Limpar feedback após 5 segundos
+setTimeout(() => {
+if (feedback) {
+feedback.style.display = 'none';
+}
+inputs.forEach(input => {
+input.classList.remove('success');
+});
+}, 5000);
+});
+} else {
+const message = currentLang === 'pt' ? 'Por favor, preencha todos os campos obrigatórios.' :
+currentLang === 'en' ? 'Please fill in all required fields.' :
+'Por favor, complete todos los campos obligatorios.';
+
+if (feedback) {
+feedback.textContent = message;
+feedback.className = 'form-feedback error';
+}
+}
+});
+});
+
+// Efeitos visuais adicionais
+const observerOptions = {
+threshold: 0.1,
+rootMargin: '0px 0px -50px 0px'
+};
+
+const observer = new IntersectionObserver(function(entries) {
+entries.forEach(entry => {
+if (entry.isIntersecting) {
+entry.target.style.opacity = '1';
+entry.target.style.transform = 'translateY(0)';
+}
+});
+}, observerOptions);
+
+// Aplicar efeitos de entrada
+document.querySelectorAll('.highlight-card, .ong-card, .step, .stat-card').forEach(el => {
+el.style.opacity = '0';
+el.style.transform = 'translateY(30px)';
+el.style.transition = 'all 0.6s ease-out';
+observer.observe(el);
+});
+});
+</script>
 </body>
 </html>
